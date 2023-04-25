@@ -1,3 +1,4 @@
+
 // range sum + range query
 #include <bits/stdc++.h>
 using namespace std;
