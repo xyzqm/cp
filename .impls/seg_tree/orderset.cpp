@@ -9,7 +9,6 @@ int n, q, x[N];
 ll sum[4 * N];
 map<int, int> mp, rmp;
 ll _query1(int p, int l, int r, int k) {
-    // cout << p << " " << l << " " << r << " " << k << endl;
     if (l == r) return rmp[l];
     int m = (l + r) / 2;
     if (k <= sum[2 * p]) return _query1(2 * p, l, m, k);
