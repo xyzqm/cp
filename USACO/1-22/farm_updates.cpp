@@ -14,6 +14,7 @@ void mark_cmp_relevant(int x) {
         if (!relevant[y]) mark_cmp_relevant(y);
 }
 int main() {
+    cin.tie(0)->sync_with_stdio(0);
     cin >> n >> q;
     fill(relevant + 1, relevant + n + 1, true);
     vector<pii> added;
@@ -53,5 +54,5 @@ int main() {
             adj[a].push_back(b); adj[b].push_back(a);
         }
     }
-    for (int i = 1; i <= n; i++) cout << ans[i] << endl;
+    for (int i = 1; i <= n; i++) cout << ans[i] << "\n";
 }
