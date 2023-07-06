@@ -1,3 +1,4 @@
+// code assumes p[i] < i
 #include <iostream>
 #include <vector>
 #include <algorithm>
@@ -6,13 +7,13 @@
 using namespace std;
 const int N = 5e5;
 const int K = 20;
-int n, q, c = -1, a[2 * N], ind[2 * N], stl[2 * N][K], str[2 * N][K];
+int n, q, i1 = -1, a[2 * N], ind[2 * N], stl[2 * N][K], str[2 * N][K];
 vector<int> g[N];
 void dfs(int x) {
-    if (!g[x].size()) a[ind[x] = ++c] = x;
+    if (!g[x].size()) a[ind[x] = ++i1] = x;
     for (int y : g[x]) {
-        a[++c] = x;
-        if (ind[x] < 0) ind[x] = c;
+        a[++i1] = x;
+        if (ind[x] < 0) ind[x] = i1;
         dfs(y);
     }
 }
@@ -25,11 +26,11 @@ int main() {
     }
     fill(ind, ind + 2 * N, -1);
     dfs(0);
-    for (int i = 0; i <= c; i++) stl[i][0] = str[i][0] = a[i];
+    for (int i = 0; i <= i1; i++) stl[i][0] = str[i][0] = a[i];
     for (int k = 1; k < K; k++) {
-        for (int i = 0; i <= c; i++) {
+        for (int i = 0; i <= i1; i++) {
             stl[i][k] = stl[i][k - 1];
-            if (int j = i + (1 << (k - 1)); j <= c) UPD(stl[i][k], stl[j][k - 1]);
+            if (int j = i + (1 << (k - 1)); j <= i1) UPD(stl[i][k], stl[j][k - 1]);
             str[i][k] = str[i][k - 1];
             if (int j = i - (1 << (k - 1)); j >= 0) UPD(str[i][k], str[j][k - 1]);
         }
