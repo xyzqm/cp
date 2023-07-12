@@ -3,7 +3,6 @@
 #include <map>
 using namespace std;
 using ll = long long;
-using pii = pair<int, int>;
 const int N = 1e6;
 ll a[N], b[N];
 int main() {
