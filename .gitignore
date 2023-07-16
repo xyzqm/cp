@@ -2,3 +2,5 @@ Unfinished/
 .vscode/
 a.out
 stress_test.cpp
+out.txt
+test.txt
