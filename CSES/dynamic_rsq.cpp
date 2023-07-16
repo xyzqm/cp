@@ -1,31 +1,32 @@
 #include <iostream>
+#define COMB(a, b) (a) + (b)
 using namespace std;
 using ll = long long;
 const int N = 2e5 + 1;
 int n, q, a[N];
-ll sum[4 * N];
+ll seg[4 * N];
 ll query(int i, int j, int p = 1, int l = 1, int r = n) {
     if (r < i || l > j) return 0;
-    if (i <= l && r <= j) return sum[p];
+    if (i <= l && r <= j) return seg[p];
     int m = (l + r) / 2;
-    return query(i, j, 2 * p, l, m) + query(i, j, 2 * p + 1, m + 1, r);
+    return COMB(query(i, j, 2 * p, l, m), query(i, j, 2 * p + 1, m + 1, r));
 }
 void update(int i, int x, int p = 1, int l = 1, int r = n) {
-    if (l == r) sum[p] = x;
+    if (l == r) seg[p] = x;
     else {
         int m = (l + r) / 2;
         if (i <= m) update(i, x, 2 * p, l, m);
         else update(i, x, 2 * p + 1, m + 1, r);
-        sum[p] = sum[2 * p] + sum[2 * p + 1];
+        seg[p] = COMB(seg[2 * p], seg[2 * p + 1]);
     }
 }
 void build(int p = 1, int l = 1, int r = n) {
-    if (l == r) sum[p] = a[l];
+    if (l == r) seg[p] = a[l];
     else {
         int m = (l + r) / 2;
         build(2 * p, l, m); 
         build(2 * p + 1, m + 1, r);
-        sum[p] = sum[2 * p] + sum[2 * p + 1];
+        seg[p] = COMB(seg[2 * p], seg[2 * p + 1]);
     }
 }
 int main() {
