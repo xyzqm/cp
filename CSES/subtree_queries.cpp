@@ -48,8 +48,6 @@ int main() {
         g[v].push_back(u);
     }
     dfs();
-    // for (int i = 1; i <= n; i++) cout << I[i] << " ";
-    // cout << endl;
     build();
     while (q--) {
         int t, s;
