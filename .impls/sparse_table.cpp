@@ -4,25 +4,29 @@
 using namespace std;
 const int N = 5e5;
 const int K = 20;
-int n, q, a[N], st[2][N][K];
-int main() {
-    cin >> n >> q;
-    for (int i = 0; i < n; ++i) {
-        cin >> a[i];
-        st[0][i][0] = st[1][i][0] = a[i];
-    }
-    for (int k = 1; k < K; ++k) {
-        for (int i = 0; i < n; ++i) {
-            st[0][i][k] = st[0][i][k - 1];
-            if (int j = i + (1 << (k - 1)); j < n) UPD(st[0][i][k], st[0][j][k - 1]);
-            st[1][i][k] = st[1][i][k - 1];
-            if (int j = i - (1 << (k - 1)); j >= 0) UPD(st[1][i][k], st[1][j][k - 1]);
+int n, q, a[N], stl[N][K], str[N][K];
+void build() {
+    for (int i = 0; i < n; i++) stl[i][0] = str[i][0] = a[i];
+    for (int j = 1; j < K; j++) {
+        for (int i = 0; i < n; i++) {
+            stl[i][j] = stl[i][j - 1];
+            if (int k = i + (1 << (j - 1)); k < n) stl[i][j] = min(stl[i][j], stl[k][j - 1]);
+            str[i][j] = str[i][j - 1];
+            if (int k = i - (1 << (j - 1)); k >= 0) str[i][j] = min(str[i][j], str[k][j - 1]);
         }
     }
+}
+int mn(int l, int r) {
+    int k = log2(r - l);
+    return min(stl[l][k], str[r - 1][k]);
+}
+int main() {
+    cin >> n >> q;
+    for (int i = 0; i < n; ++i) cin >> a[i];
+    build();
     for (int i = 0; i < q; i++) {
         int l, r;
         cin >> l >> r;
-        int k = log2(r - l);
-        cout << min(st[0][l][k], st[1][r - 1][k]) << endl;
+        cout << mn(l, r) << endl;
     }
 }
