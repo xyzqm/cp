@@ -14,12 +14,12 @@ ll query(int i, int j, int p = 1, int l = 1, int r = n) {
     int m = (l + r) / 2;
     return COMB(query(i, j, 2 * p, l, m), query(i, j, 2 * p + 1, m + 1, r));
 }
-void update(int i, int x, int p = 1, int l = 1, int r = n) {
+void upd(int i, int x, int p = 1, int l = 1, int r = n) {
     if (l == r) seg[p] = x;
     else {
         int m = (l + r) / 2;
-        if (i <= m) update(i, x, 2 * p, l, m);
-        else update(i, x, 2 * p + 1, m + 1, r);
+        if (i <= m) upd(i, x, 2 * p, l, m);
+        else upd(i, x, 2 * p + 1, m + 1, r);
         seg[p] = COMB(seg[2 * p], seg[2 * p + 1]);
     }
 }
@@ -55,7 +55,7 @@ int main() {
         if (t == 1) {
             ll x;
             cin >> x;
-            update(I[s], x);
+            upd(I[s], x);
         } else cout << query(I[s], E[s]) << endl;
     }
 }
