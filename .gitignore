@@ -5,3 +5,6 @@ stress_test.cpp
 out.txt
 test.txt
 contest/
+# cph files
+**/*.bin
+**/*.prob

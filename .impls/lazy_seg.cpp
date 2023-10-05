@@ -21,7 +21,7 @@ ll query(int i, int j, int p = 1, int l = 1, int r = n) {
         return seg[p];
     }
     else {
-        int m = (l + r) >> 1;
+        int m = (l + r) / 2;
         return query(i, j, 2 * p, l, m) + query(i, j, 2 * p + 1, m + 1, r);
     }
 }
@@ -32,7 +32,7 @@ void update(int i, int j, ll x, int p = 1, int l = 1, int r = n) {
         lazy[p] += x;
         push(p, l, r);
     } else {
-        int m = (l + r) >> 1;
+        int m = (l + r) / 2;
         update(i, j, x, 2 * p, l, m);
         update(i, j, x, 2 * p + 1, m + 1, r);
         seg[p] = seg[2 * p] + seg[2 * p + 1];
