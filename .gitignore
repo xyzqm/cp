@@ -6,5 +6,5 @@ out.txt
 test.txt
 contest/
 # cph files
+**/.cph/
 **/*.bin
-**/*.prob
