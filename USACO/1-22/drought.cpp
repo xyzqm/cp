@@ -1,7 +1,4 @@
 #include <iostream>
-#include <vector>
-#include <tuple>
-#include <algorithm>
 using namespace std;
 #define int long long
 const int inf = 1e18;
