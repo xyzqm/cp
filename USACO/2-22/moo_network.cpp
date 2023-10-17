@@ -28,16 +28,15 @@ signed main() {
         cin >> x[i] >> y[i];
         v[i] = p[i] = i, s[i] = 1;
     }
-    sort(v, v + n, [](int i, int j) { return x[i] < x[j]; });
-    // for (int i = 0; i < n; i++) cout << v[i] << " ";
-    // cout << endl;
-    for (int i = 0; i < n; i++) q[y[v[i]]].push(v[i]);
+    sort(v, v + n, [](int i, int j) { 
+        if (x[i] != x[j]) return x[i] < x[j];
+        else return y[i] < y[j]; 
+    });
     vector<T> E;
-    // for (int i = 0; i < n; i++) {
-    //     for (int j = i; j < min(n, i + 20); j++) {
-    //         E.emplace_back(D(x[v[j]] - x[v[i]], y[v[j]] - y[v[i]]), v[i], v[j]);
-    //     }
-    // }
+    for (int i = 0; i < n; i++) {
+        q[y[v[i]]].push(v[i]);
+        if (i && x[v[i]] == x[v[i - 1]]) E.emplace_back(D(0, y[v[i]] - y[v[i - 1]]), v[i], v[i - 1]);
+    }
     for (int _ = 0; _ < n; _++) {
         int i = v[_];
         for (int j = 0; j < M; j++) {
@@ -46,10 +45,8 @@ signed main() {
         }
     }
     int ans = 0;
-    // cout << E.size() << endl;
     sort(E.begin(), E.end());
     for (auto [w, u, v] : E) {
-        // cout << u << " " << v << endl;
         if (U(u, v)) ans += w;
     }
     cout << ans << endl;
