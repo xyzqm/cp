@@ -9,7 +9,11 @@ contest/
 **/.cph/
 **/*.bin
 # stress testing files
-a*
-b*
-gen*
+a
+a.cpp
+b
+b.cpp
+b.out
+gen.cpp
+gen
 test*
