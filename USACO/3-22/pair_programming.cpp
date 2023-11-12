@@ -4,9 +4,12 @@ using ll = long long;
 const int N = 2e3 + 1;
 const int M = 1e9 + 7;
 char a[N], b[N];
+// zero[i][j] -> whether 0 is in I(i, j)
 bool zero[N][N];
+// dp[i][j] -> number of nonzero expressions in I(i, j)
 ll dp[N][N];
 bool digit(char c) { return c >= '1' && c <= '9'; }
+// in-place addition and subtraction under modulo
 ll ad(ll& a, ll b) { return a = (a + b) % M; }
 ll sb(ll& a, ll b) { return a = (((a - b) % M) + M) % M; }
 signed main() {
