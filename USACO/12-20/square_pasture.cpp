@@ -47,7 +47,6 @@ signed main() {
             if (d < M - m) continue;
             for (int k = i; k <= j; k++) {
                 v[c[k].second] = true;
-                int t = r;
                 if (c[k].second <= m && c[k].second >= M - d && v[c[k].second + d]) --r;
                 else if (c[k].second >= M && c[k].second <= m + d && v[c[k].second - d]) --r;
             }
