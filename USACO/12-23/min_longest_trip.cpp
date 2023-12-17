@@ -2,11 +2,12 @@
 #include <vector>
 #include <tuple>
 #include <algorithm>
+#include <set>
+#include <tuple>
 using namespace std;
 #define int long long
 const int inf = 1e18;
 using P = pair<int, int>;
-using T = tuple<int, int, int>;
 template<typename... Args>
 void print(Args... args)
 {
@@ -17,7 +18,14 @@ const int N = 2e5 + 1;
 const int M = 4e5 + 1;
 const int K = 20;
 vector<P> g[N];
-int n, m, v[N], d[N], r[N], X[N], E[N];
+int n, m, v[N], l0 = 0, d[N], r[N], X[N], E[N];
+bool all_same = true;
+struct T {
+    int e, x, o;
+    bool operator<(T b) const {
+        return make_tuple(e, x, o) < make_tuple(b.e, b.x, b.o);
+    }
+};
 void dfs(int x) {
     // cout << x << endl;
     v[x] = true;
@@ -38,23 +46,20 @@ void dfs(int x) {
     // cout << endl;
     if (!candidates.size()) {
         d[x] = r[x] = X[x] = 0;
-    } else {
-        vector<int> cp = candidates;
-        while (cp.size() > 1 && X[cp[0]]) {
-            // cout << cp[0] << endl;
-            int mn = inf;
-            vector<int> nxt, NXT;
-            for (int i : cp) mn = min(mn, E[i]);
-            for (int _ = 0; _ < cp.size(); _++) {
-                int i = cp[_];
-                if (E[i] == mn) nxt.push_back(X[i]), NXT.push_back(candidates[_]);
-            }
-            cp = nxt, candidates = NXT;
+        E[x] = inf;
+    } else if (!all_same) {
+        set<T> s;
+        for (int i : candidates) s.insert({min_label, i, i});
+        while (s.size() > 1 && d[s.begin()->x]) {
+            s.erase(s.upper_bound({s.begin()->e, inf, inf}), s.end());
+            set<T> tmp;
+            for (auto [e, x, o] : s) tmp.insert({E[x], X[x], o});
+            s = tmp;
         }
         // print(x, min_label, candidates[0]);
-        r[x] = min_label + r[candidates[0]];
-        X[x] = candidates[0], E[x] = min_label;
-    }
+        r[x] = min_label + r[s.begin()->o];
+        X[x] = r[s.begin()->o], E[x] = min_label;
+    } else r[x] = d[x] * l0;
 }
 signed main() {
     cin.tie(0)->sync_with_stdio(0);
@@ -62,6 +67,8 @@ signed main() {
     for (int _ = 0; _ < m; _++) {
         int a, b, l;
         cin >> a >> b >> l;
+        if (!l0) l0 = l;
+        if (l0 != l) all_same = false;
         g[a].push_back({b, l});
     }
     for (int i = 1; i <= n; i++) if (!v[i]) dfs(i);
