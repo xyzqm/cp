@@ -17,4 +17,5 @@ b.out
 gen.cpp
 gen
 test*
+**/*.in
 .DS_Store
