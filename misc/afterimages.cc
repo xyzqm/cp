@@ -27,8 +27,6 @@ ll solve(int a[N], int b[N]) {
     r[i] = max(abs(a[i] - *s.begin()), abs(a[i] - *s.rbegin()));
     s.erase(b[i]);
   }
-  // for (int i = 0; i < n; i++) cout << r[i] << " ";
-  // cout << endl;
   return accumulate(r, r + n, 0LL);
 }
 
