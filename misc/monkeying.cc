@@ -23,7 +23,6 @@ int main() {
       if ((a[i] | OR) == a[i]) O = min(O, n - count[a[i]]);
       if ((a[i] & AND) == a[i]) A = min(A, n - count[a[i]]);
     }
-    // cout << O << " " << A << "\n";
     if (O < A) cout << "or\n";
     else if (A < O) cout << "and\n";
     else cout << "sad\n";
