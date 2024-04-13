@@ -46,6 +46,7 @@ void lsd(int x) {
 }
 
 int main() {
+  cin.tie(0)->sync_with_stdio(0);
   cin >> n;
   for (int i = 1; i < n; i++) {
     int u, v; cin >> u >> v;
