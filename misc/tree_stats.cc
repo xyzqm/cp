@@ -62,12 +62,10 @@ void hld(int x = hv[1] = 1) {
 T path(int x, int y) {
   T r = {0, -inf};
   while (hv[x] != hv[y]) {
-    // cout << x << " " << y << "\n";
     if (d[hv[x]] > d[hv[y]]) swap(x, y);
     r += query(id[hv[y]], id[y]);
     y = p[hv[y]];
   }
-  // cout << x << " " << y << "\n";
   if (id[x] > id[y]) swap(x, y);
   return r + query(id[x], id[y]);
 }
