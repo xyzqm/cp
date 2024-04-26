@@ -20,7 +20,7 @@ vector<T> fft(vector<T> a, T w) {
   vector<T> E = fft(e, w * w);
   vector<T> O = fft(o, w * w);
   vector<T> r(n);
-  cd c = 1;
+  T c = 1;
   for (int i = 0; i < r.size(); i++) {
     r[i] = E[i % (n / 2)] + c * O[i % (n / 2)];
     c *= w;
