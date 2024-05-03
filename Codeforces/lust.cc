@@ -29,8 +29,6 @@ signed main() {
             if (r[j] < 0) r[j] += M;
         }
         r[0] = r[0] * a[i] % M;
-       // for (int i = 0; i <= n; i++) cout << r[i] << " ";
-       // cout << endl;
     }
     int R = 0, np = 1, mf = 1;
     for (int i = 0; i <= n; i++) {
