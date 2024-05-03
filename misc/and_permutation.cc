@@ -1,5 +1,4 @@
 // https://open.kattis.com/problems/andpermutation
-// test
 #include <iostream>
 #include <map>
 using namespace std;
