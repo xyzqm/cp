@@ -3,9 +3,9 @@
     "projectName" : ""
   },
   "tasks" : {
+    "enabled" : true,
     "items" : [
 
-    ],
-    "enabled" : true
+    ]
   }
 }

@@ -4,5 +4,5 @@ echo "compiling $file"
 g++ -std=c++17 -Wall $file
 echo "compiled $file in $((SECONDS - start)) seconds"
 start=$SECONDS
-./a.out
+./a.out <a.in
 echo "finished in $((SECONDS - start)) seconds"
