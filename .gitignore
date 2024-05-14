@@ -10,11 +10,11 @@ contest/
 **/*.bin
 # stress testing files
 a
-a.cpp
+a.cc
 b
-b.cpp
+b.cc
 b.out
-gen.cpp
+gen.cc
 gen
 test*
 **/*.in
