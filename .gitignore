@@ -20,3 +20,4 @@ test*
 a.cc
 b.cc
 gen.cc
+a.out.dSYM/
