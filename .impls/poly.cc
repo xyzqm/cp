@@ -38,7 +38,8 @@ struct mint {
       c = mul(c, c);
     }
     assert(r.second.v == 0 && (r.first * r.first).v == v);
-    return r.first;
+    if (r.first.v < M / 2) return r.first;
+    return r.first * -1;
   }
   mint operator/(mint o) { return *this * o.inv(); }
 };
@@ -64,9 +65,9 @@ template <int N> struct F {
       int s = inv ? _ : N / 2 / _; // stride
       for (int i = 0; i < N; i++) if (!(i & s)) {
         mint W = (inv ? ip : p)[N / 2 / s * (i & (s - 1))];
-        mint x = a[i], y = a[i + s];
-        if (inv) a[i] = (x + y * W) * i2, a[i + s] = (x - y * W) * i2;
-        else a[i] = x + y, a[i + s] = (x - y) * W;
+        mint x = a[i], y = a[i | s];
+        if (inv) a[i] = (x + y * W) * i2, a[i | s] = (x - y * W) * i2;
+        else a[i] = x + y, a[i | s] = (x - y) * W;
       }
     } 
     return *this;
@@ -75,10 +76,12 @@ template <int N> struct F {
   const mint& operator[](int i) const { return a[i]; }
   // pointwise multiplication
   void operator*= (F<N> &f) { for (int i = 0; i < N; i++) a[i] = a[i] * f[i]; }
-  // pointwise multiplication by scalar
-  F<N> operator* (const mint &v) const { F<N> f = *this; for (int i = 0; i < N; i++) f[i] = f[i] * v; return f; }
+  // multiplication by scalar
+  void operator*= (const mint &v) { for (int i = 0; i < N; i++) a[i] = a[i] * v; }
+  F<N> operator* (const mint &v) const { F<N> f = *this; f *= v; return f; }
   // addition by scalar
-  F<N> operator+ (const mint &v) const { F<N> f = *this; f[0] = f[0] + v; return f; }
+  void operator+= (const mint &v) { a[0] = a[0] + v; }
+  F<N> operator+ (const mint &v) const { F<N> f = *this; f += v; return f; }
   // adding two polynomials
   template <int K>
   F<N> operator+ (const F<K> &&o) const { F<N> f = *this; for (int i = 0; i < min(N, K); i++) f[i] = f[i] + o[i]; return f; } 
@@ -102,7 +105,6 @@ template <int N> struct F {
   }
   template <int K>
   F<N> inv(F<K> &&f) {
-    /* cout << "inv-" << f << endl; */
     if constexpr (K == N) return f;
     else return inv<K << 1>(invl(std::move(f)));
     
