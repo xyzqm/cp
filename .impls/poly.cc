@@ -3,7 +3,7 @@
 #include <initializer_list>
 #include <iostream>
 #include <utility>
-#define exit(X) { cout << (X) << endl; return 0; }
+#define exit(X) { cout << (X) << endl; return; }
 using namespace std;
 const int N = 1 << 19;
 
@@ -46,25 +46,27 @@ struct mint {
 
 const mint i2 = mint(2).inv();
 
+mint w = mint(3).E((mint::M - 1) / (N << 1));
+mint iw = w.inv();
+mint p[N << 1]{}, ip[N << 1]{};
+
 template <int N> struct F {
-  static inline const mint w = mint(3).E((mint::M - 1) / N);
-  static inline const mint iw = w.inv();
-  static inline mint p[N]{}, ip[N]{};
   array<mint, N> a{};
   F<N>(initializer_list<mint> l = {}) {
     assert(!l.size() || l.size() == N);
     int i = 0; for (mint x : l) a[i++] = x;
-    if (p[0].v) return;
-    p[0] = 1; for (int i = 1; i < N; i++) p[i] = p[i - 1] * w; 
-    ip[0] = 1; for (int i = 1; i < N; i++) ip[i] = ip[i - 1] * iw;
   }
   template<int K>
   F<K> slice() const { F<K> f; for (int i = 0; i < min(K, N); i++) f[i] = a[i]; return f; }
   F<N>& fft(bool inv = false) {
-    for (int _ = 1; _ < N; _ <<= 1) {
-      int s = inv ? _ : N / 2 / _; // stride
+    if (!p[0].v) {
+      p[0] = 1; for (int i = 1; i < (::N << 1); i++) p[i] = p[i - 1] * w;
+      ip[0] = 1; for (int i = 1; i < (::N << 1); i++) ip[i] = ip[i - 1] * iw;
+    }
+    for (int _ = 0; (1 << _) < N; _++) {
+      int s = inv ? 1 << _ : N >> 1 >> _; // stride
       for (int i = 0; i < N; i++) if (!(i & s)) {
-        mint W = (inv ? ip : p)[N / 2 / s * (i & (s - 1))];
+        mint W = (inv ? ip : p)[(::N / s * (i & (s - 1)))];
         mint x = a[i], y = a[i | s];
         if (inv) a[i] = (x + y * W) * i2, a[i | s] = (x - y * W) * i2;
         else a[i] = x + y, a[i | s] = (x - y) * W;
@@ -125,18 +127,39 @@ template <int N> struct F {
     else return sqrt<K << 1>(sqrtl(std::move(f)));
   }
   F<N> sqrt() { assert(a[0].sym().v == 1); return sqrt(F<1>{a[0].sqrt()}); }
+
+  // derivative
+  F<N> d() {
+    F<N> f; for (int i = 0; i < N - 1; i++) f[i] = mint(i + 1) * a[i + 1];
+    return f;
+  }
+  // integral
+  F<N> i() {
+    F<N> f; for (int i = 1; i < N; i++) f[i] = a[i - 1] / i;
+    return f;
+  }
+
+  F<N> ln() { return (d() / *this).i().template slice<N>(); }
+
+  // exponent (e^f)
+  template <int K>
+  F<K << 1> expl(F<K> &&f) {
+    F<K << 1> g = f.template slice<K << 1>();
+    return (g * (slice<K << 1>() + 1 + g.ln() * -1)).template slice<K << 1>();
+  }
+  template <int K>
+  F<N> exp(F<K> &&f) {
+    if constexpr (K == N) return f;
+    else return exp(expl(std::move(f)));
+  }
+  F<N> exp() { return exp(F<1>{1}); }
 };
 
 mint a[N];
 
-signed main() {
-  cin.tie(0)->sync_with_stdio(0); 
-  F<N> f;
-  int n; cin >> n;
-  /* for (int i = 0; i < n; i++) cin >> f[i]; */
-  /* auto h = f.inv(); */
-  /* for (int i = 0; i < n; i++) cout << h[i] << " "; */
-  for (int i = 0; i < n; i++) cin >> a[i];
+int n; F<N> f; 
+
+void sqrt() {
   int j = 0; while (j < n && !a[j].v) j++;
   if (j < n && (j & 1 || a[j].sym().v != 1)) exit(-1);
   for (int i = j; i < n; i++) f[i - j] = a[i]; 
@@ -144,6 +167,17 @@ signed main() {
   j >>= 1;
   for (int i = 0; i < j; i++) cout << 0 << " ";
   for (int i = 0; i < n - j; i++) cout << h.a[i] << " ";
+  cout << endl;
+}
+
+signed main() {
+  cin.tie(0)->sync_with_stdio(0); 
+  cin >> n;
+  for (int i = 0; i < n; i++) cin >> a[i];
+  sqrt(); return 0;
+  for (int i = 0; i < n; i++) f[i] = a[i];
+  F<N> h = f.exp();
+  for (int i = 0; i < n; i++) cout << h[i] << " ";
   cout << endl;
 }
 
