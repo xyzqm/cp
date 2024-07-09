@@ -4,7 +4,6 @@
 #include <vector>
 #include <algorithm>
 #define int long long
-#define exit(X) { cout << (X); return; }
 using namespace std;
 const int inf = 1e18;
 
