@@ -1,6 +1,7 @@
 #include <cassert>
 #include <functional>
 #include <iostream>
+#include <vector>
 #define int long long
 using namespace std;
 
@@ -32,94 +33,77 @@ struct F {
 
 typedef struct Node * T;
 struct Node {
-  mint v, sum;
+  mint v, s;
   int sz;
-  T l, r, p;
+  T l, r;
   F f;
   bool rev;
-  static T ghost;
-  Node(int v, T l = ghost, T r = ghost) : v(v), sum(v), sz(0), l(l), r(r), p(ghost), rev(false) {
-    if (l) l->p = this;
-    if (r) r->p = this;
-    /* cout << "constructor" << endl; */
-    if (l && r) pull();
-  }
-  bool left() { assert(p); return this == p->l; }
+  static inline vector<T> st = {};
+  Node(int v, T l = nullptr, T r = nullptr) : v(v), s(v), sz(0), l(l), r(r), rev(false) { pull(); }
+  static int size(T x) { return x ? x->sz : 0; }
+  static mint sum(T x) { return x ? x->s : 0; } 
   void push() {
-    if (this == ghost) return;
     if (rev) {
       rev = false;
       swap(l, r);
-      l->rev ^= true;
-      r->rev ^= true;
+      if (l) l->rev ^= true;
+      if (r) r->rev ^= true;
     }
     if (f) {
       v = f(v);
-      sum = f.w * sum + f.b * sz;
-      l->f = f(l->f);
-      r->f = f(r->f);
+      s = f.w * s + f.b * sz;
+      if (l) l->f = f(l->f);
+      if (r) r->f = f(r->f);
       f = F{1, 0};
     }
   }
   void pull() {
-    if (this == ghost) return;
     assert(!f);
-    assert(!l || l == ghost || l->p == this);
-    assert(!r || r == ghost || r->p == this);
-    l->push(), r->push();
-    sz = l->sz + r->sz + 1;
-    sum = l->sum + r->sum + v;
+    if (l) l->push();
+    if (r) r->push();
+    sz = size(l) + size(r) + 1;
+    s = sum(l) + sum(r) + v;
   }
-  void rotate() {
-    assert(this != ghost && p != ghost);
-    /* cout << this << " " << sz << endl; */
-    /* cout << p << endl; */
-    if (p != ghost) {
-      if (left()) assert(p->l == this);
-      else assert(p->r == this);
-    }
+  void rotate(T p, T g) {
     int o = p->sz;
     p->push(), push();
-    if (left()) {
-      /* cout << "left" << endl; */
-      p->l = r, p->l->p = p, p->pull(), r = p;
-      p = p->p;
-      if (p != ghost) {
-        if (r->left()) p->l = this;
-        else p->r = this;
-      }
-      r->p = this;
-
-    } else {
-      /* cout << "right" << endl; */
-      p->r = l, p->r->p = p, p->pull(), l = p;
-      p = p->p;
-      if (p != ghost) {
-        if (l->left()) p->l = this;
-        else p->r = this;
-      }
-      l->p = this;
+    assert(this == p->l || this == p->r);
+    if (this == p->l) p->l = r, r = p;
+    else p->r = l, l = p;
+    if (g) {
+      if (p == g->l) g->l = this;
+      else g->r = this;
     }
-    pull();
+    /* assert(!g || g->l == this || g->r == this); */
+    p->pull(), pull();
     assert(sz == o);
   }
+  T top() {
+    if (!st.size()) return nullptr;
+    T x = st.back(); st.pop_back();
+    return x;
+  }
   bool step() {
-    p->p->push();
-    p->push();
-    if (p == ghost) return false;
-    if (p->p == ghost) rotate();
-    else if (left() == p->left()) p->rotate(), rotate();
-    else rotate(), rotate();
+    T x = top(), p = top(), g = top(), a = top();
+    if (!p) return false;
+    assert(x == this && p);
+    /* cout << x << endl << p << endl; */
+    /* assert(this == p->l || this == p->r); */
+    if (!g) rotate(p, g);
+    else if ((this == p->l) == (p == g->l)) p->rotate(g, a), rotate(p, a);
+    else rotate(p, g), rotate(g, a);
+    if (a) st.push_back(a);
+    st.push_back(x);
+    assert(!a || a->l == x || a->r == x);
     return true;
   }
   T splay(int x) { // splays and returns new root
     /* cout << this << endl; */
-    if (this == ghost) return this;
-    /* cout << x << " " << sz << endl; */
+    st.push_back(this);
     push();
     assert(x < sz);
-    if (x < l->sz) return l->splay(x);
-    else if (x > l->sz) return r->splay(x - l->sz - 1);
+    if (x < size(l)) return l->splay(x);
+    else if (x > size(l)) return r->splay(x - size(l) - 1);
     else { // we found the element
       while (step());
       /* cout << l->sz << " " << x << endl; */
@@ -128,36 +112,33 @@ struct Node {
     }
   }
   friend ostream& operator<<(ostream& os, T s) {
-    if (s == ghost) return os;
+    if (!s) return os;
     os << s->l;
     os << s->v << " ";
     return os << s->r;
   }
 };
 
-T Node::ghost = new Node(0);
-
 struct Splay {
-  T root = Node::ghost;
-  void splay(int x) { root = root->splay(x); }
+  T root = nullptr;
+  void splay(int x) { assert(!Node::st.size()); root = root->splay(x); }
   auto split(int i) { // {[0, i), [i, )}
-    if (i == root->sz) return make_pair(Splay{root}, Splay{Node::ghost});
+    if (i == (root ? root->sz : 0)) return make_pair(Splay{root}, Splay{nullptr});
     /* cout << root->sz << "y" << endl; */
     /* cout << "splitting" << endl; */
     splay(i);
     assert(root != nullptr);
-    assert(root->l != nullptr);
     T l = root->l;
+    root->l = nullptr;
     /* cout << root->sz << "x" << endl; */
-    l->p = Node::ghost, root->l = Node::ghost;
     /* cout << "post-split" << endl; */
     root->pull();
     return make_pair(Splay{l}, Splay{root});
   }
   Splay join(Splay o) {
-    if (root == Node::ghost) return root = o.root, *this;
+    if (!root) return root = o.root, *this;
     splay(root->sz - 1);
-    root->r = o.root, o.root->p = root;
+    root->r = o.root;
     /* cout << "post-join" << endl; */
     root->pull();
     return *this;
@@ -167,27 +148,20 @@ struct Splay {
     root = new Node(x, l.root, r.root);
   }
   void del(int i) {
-    /* cout << "Deleting" << endl; */
     splay(i);
-    root->l->p = root->r->p = Node::ghost;
-    /* cout << root->l->sz << " " << root->r->sz << endl; */
     root = Splay{root->l}.join(Splay{root->r}).root;
   }
   mint query(int l, int r) { // query range [l, r)
     Splay a, b, c;
-    /* cout << root->sz << endl; */
     tie(a, b) = split(l);
-    /* cout << a.root->sz << "q" << b.root->sz << endl; */
     tie(b, c) = b.split(r - l);
-    mint R = b.root->sum;
+    mint R = b.root->s;
     root = a.join(b).join(c).root;
     return R;
   }
   void upd(int l, int r, function<void(T)> f) {
     Splay a, b, c;
-    /* cout << root->sz << endl; */
     tie(a, b) = split(l);
-    /* cout << a.root->sz << "q" << b.root->sz << endl; */
     tie(b, c) = b.split(r - l);
     f(b.root);
     root = a.join(b).join(c).root;
@@ -197,7 +171,6 @@ struct Splay {
 
 signed main() {
   cin.tie(0)->sync_with_stdio(0);
-  Node::ghost->l = Node::ghost->r = Node::ghost->p = Node::ghost;
   int n, q; cin >> n >> q;
   for (int i = 0; i < n; i++) {
     int x; cin >> x;
