@@ -77,12 +77,11 @@ void merge(T& t, T l, T r) {
   else merge(r->l, l, r->l), t = r;
   u(t);
 }
-void split(T t, T& l, T& r, int x, int sz = 0) {
+void split(T t, T& l, T& r, int x) {
   if (!t) return void(l = r = 0);
   push(t);
-  int sz_ = sz + ::sz(t->l) + 1;
-  if (x < sz_) split(t->l, l, t->l, x, sz), r = t;
-  else split(t->r, t->r, r, x, sz_), l = t;
+  if (x > sz(t->l)) split(t->r, t->r, r, x - sz(t->l) - 1), l = t;
+  else split(t->l, l, t->l, x), r = t;
   u(t);
 }
 T t = NULL;
