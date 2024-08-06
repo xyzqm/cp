@@ -21,3 +21,5 @@ a.cc
 b.cc
 gen.cc
 a.out.dSYM/
+manim/media/
+manim/__pycache__/
