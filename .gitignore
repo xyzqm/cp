@@ -15,7 +15,7 @@ b.out
 gen
 test*
 **/*.in
-.DS_Store
+**/.DS_Store
 *.out
 a.cc
 b.cc
