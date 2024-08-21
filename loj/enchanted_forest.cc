@@ -1,5 +1,6 @@
 #include <cassert>
 #include <functional>
+#include <array>
 #include <algorithm>
 #include <iostream>
 #define int long long
