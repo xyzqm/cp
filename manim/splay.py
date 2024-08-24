@@ -79,22 +79,13 @@ class Splay(VMobject):
         return Graph(list(G.nodes), list(G.edges), layout=lt, labels=True)
 
     # animates current graph into graph G
-    def animate_to(self, G: Graph):
-        animations1 = []  # store in a list so we can play them all in parallel
-        animations1 += [
-            self.G[x].animate.move_to(G._layout[x]) for x in self.G._graph.nodes
-        ]
-        to_remove = [e for e in self.G.target._graph.edges if not G._graph.has_edge(*e)]
-        print(to_remove)
-        animations1 += [self.G.animate.remove_edges(*to_remove)]
-        print(self.G, self.G.target)
-        to_add = [e for e in G._graph.edges if not self.G.target._graph.has_edge(*e)]
-        print(to_add)
-        animations2 = self.G.animate.add_edges(*to_add)
-        print(self.G, self.G.target)
-        print(self.G.target.edges)
-
-        return Succession(AnimationGroup(*animations1), animations2)
+    def animate_to(self, G: Graph, scene: Scene):
+        animations = [self.G[x].animate.move_to(G._layout[x]) for x in self.G._graph.nodes]
+        to_remove = [e for e in self.G._graph.edges if not G._graph.has_edge(*e)]
+        if len(to_remove) > 0: animations += [self.G.animate.remove_edges(*to_remove)]
+        scene.play(animations)
+        to_add = [e for e in G._graph.edges if not self.G._graph.has_edge(*e)]
+        if len(to_add) > 0: scene.play(self.G.animate.add_edges(*to_add))
 
     def root(self):
         p = self.get_all_parents(self.g)
@@ -104,7 +95,7 @@ class Splay(VMobject):
                 root = i
         return root
 
-    def splay_rotate(self, x):
+    def splay_rotate(self, x, scene: Scene):
         p = self.get_all_parents(self.g)
         y = p[x]
         z = p[y]
@@ -119,28 +110,26 @@ class Splay(VMobject):
         else:
             self.g[y][1] = self.g[x][0]
             self.g[x][0] = y
-        return self.animate_to(self.rebuild())
+        return self.animate_to(self.rebuild(), scene)
 
-    def splay(self, x):
-        animations = []
-        animations.append(self.G[x].animate.set_color(RED))
+    def splay(self, x, scene: Scene):
+        scene.play(self.G[x].animate.set_color(RED))
         while self.root() != x:
             p = self.get_all_parents(self.g)
             y = p[x]
             z = p[y]
             if y >= 0:
-                animations.append(self.splay_rotate(x))
-                # if (self.g[z][0] == y) == (self.g[y][0] == x):
-                #     animations.append(self.splay_rotate(y))
-                # else:
-                #     animations.append(self.splay_rotate(x))
-        print(len(animations))
-        return Succession(*animations)
+              if (self.g[z][0] == y) == (self.g[y][0] == x):
+                  self.splay_rotate(y, scene)
+              else:
+                  self.splay_rotate(x, scene)
+            self.splay_rotate(x, scene)
 
 
 class SplayAnimation(Scene):
     def construct(self):
-        splay = Splay("LRLR")
-        self.add(splay)
-        self.wait()
-        self.play(splay.splay(4))
+        splay1 = Splay("LRLR")
+        splay2 = Splay("RRRR")
+        self.add(splay1.shift(LEFT * 4))
+        self.add(splay2.next_to(splay1, RIGHT))
+        splay1.splay(4, self)
