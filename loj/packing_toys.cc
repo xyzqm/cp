@@ -42,7 +42,7 @@ struct LineContainer : multiset<Line, less<>> {
 } ch;
 
 signed main() {
-  cin.tie(0)->sync_with_stdio(0); 
+  cin.tie(0)->sync_with_stdio(0);
   cin >> n >> L; ++L;
   for (int i = 1; i <= n; i++) {
     cin >> c[i];
