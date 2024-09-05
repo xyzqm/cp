@@ -1,7 +1,7 @@
 start=$SECONDS
 file=$(find -E . -regex '.*\.(cc|cpp)' | xargs ls -t | head -1)
 echo "compiling $file"
-g++ -std=c++17 -O2 -Wall $file -g || exit 1
+g++ -std=c++17 -O2 -Wall -fsanitize=undefined -fsanitize=address $file -g || exit 1
 echo "compiled $file in $((SECONDS - start)) seconds"
 start=$SECONDS
 ./a.out <a.in || exit 1

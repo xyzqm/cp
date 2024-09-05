@@ -1,4 +1,4 @@
--- unfortunately TLE's on CSES :(
+-- unfortunately TLEs on CSES :(
 import Control.Monad
 import Data.Monoid
 
