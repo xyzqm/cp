@@ -17,7 +17,7 @@ struct Line {
 const int N = 1e6 + 1;
 
 // queries for maximums
-struct LineContainer : deque<Line> {
+struct MonoLine : deque<Line> {
 	// (for doubles, use inf = 1/.0, div(a,b) = a/b)
 	static const ll inf = 1e18;
 	ll div(ll a, ll b) { // floored division

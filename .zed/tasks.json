@@ -4,7 +4,7 @@
 [
   {
     "label": "Run current file",
-    "command": "echo $ZED_FILE && g++ -std=c++17 -Wall -fsanitize=undefined -fsanitize=address $ZED_FILE -g && echo 'compiled' && ./a.out < a.in",
+    "command": "echo $ZED_FILE && g++ -std=c++17 -Wall -fsanitize=undefined -fsanitize=address $ZED_FILE -g && echo 'compiled' && ./a.out",
     // Current working directory to spawn the command into, defaults to current project root.
     //"cwd": "/path/to/working/directory",
     "reevaluate_context": true,
