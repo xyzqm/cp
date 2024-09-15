@@ -14,15 +14,17 @@ struct Line {
 	bool operator<(const Line& o) const { return k < o.k; }
 	bool operator<(ll x) const { return p < x; }
 	ll operator()(ll x) { return k * x + m; }
+	friend ostream& operator<<(ostream &os, Line l) {
+    auto [k, m, p, c] = l;
+    return os << k << " " << m << " " << p << " " << c << endl;
+	}
 };
 
 // queries for maximums, add lines in increasing slope and increasing queries
 struct MonoLine : deque<Line> {
-	// (for doubles, use inf = 1/.0, div(a,b) = a/b)
 	static const ll inf = 1e18;
-	ll div(ll a, ll b) { // floored division
-	 // return (a + b - 1) / b; }
-	return a / b - ((a ^ b) < 0 && a % b); }
+	ll div(ll a, ll b) { // ceiling division
+	return a / b + ((a ^ b) > 0 && a % b); }
 	ll isect(Line &x, Line &y) {
 		if (x.k == y.k) x.p = x.m > y.m ? inf : -inf;
 		else x.p = div(y.m - x.m, x.k - y.k);
@@ -33,13 +35,13 @@ struct MonoLine : deque<Line> {
     while (size() > 1 && isect(back(), l) < at(size() - 2).p) pop_back();
     if (!size() || isect(back(), l) < inf) push_back(l);
 	}
-	pair<ll, ll> query(ll x) {
+	Line query(ll x) {
 		assert(size());
-		while (front().p < x) {
+		while (front().p <= x) {
       assert(front()(x) <= at(1)(x));
   		pop_front();
 		}
-		return {front()(x), front().c};
+		return front();
 	}
 } cht;
 
@@ -62,29 +64,23 @@ ll take_photos(int n, int m, int k, vector<int> r, vector<int> c) {
       else {
         ll o = max(0LL, R - l);
         cht.add(2 * l, -(l * l) + o * o - dp[i - 1], C[i - 1]);
-        auto [v, c] = cht.query(r);
-        dp[i] = r * r - v + L, C[i] = c + 1;
+        auto ln = cht.query(r);
+        ll v = ln(r), c = ln.c;
+        dp[i] = r * r - v + L;
+        assert(dp[i] == r * r - v + L);
+        C[i] = c + 1;
+        assert(C[i] == c + 1);
         R = r;
       }
     }
-    for (int i = 1; i <= m; i++) assert(C[i] >= C[i - 1]);
-    // if (L == 2) cout << "------" << endl;
-    // int i = max_element(dp.begin(), dp.end()) - dp.begin();
-    // cout << L << " " << dp[m] << " " << C[m] << endl;
     return make_pair(dp[m], C[m]);
   };
-  // cout << ac(0).second << endl;
   ll x = (ll)n * n;
-  // for (int i = 0; i <= 100; i++) cout << ac(i).second << " ";
-  // cout << endl;
   for (ll d = x; d > 0; d /= 2) {
     while (x - d >= 0 && ac(x - d).second < k) x -= d;
   }
   --x;
-  // if (ac(L).second > k) ++L;
   auto [y, z] = ac(x);
-  // assert(z <= k);
-  // cout << x << " " << y << " " << z << endl;
   return y - k * x;
 }
 
