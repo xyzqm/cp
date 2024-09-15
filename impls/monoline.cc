@@ -15,7 +15,7 @@ struct MonoLine : deque<Line> {
 	static const ll inf = 1e18;
 	ll div(ll a, ll b) { // floored division
 		return a / b - ((a ^ b) < 0 && a % b); }
-	int isect(Line &x, Line &y) {
+	ll isect(Line &x, Line &y) {
 		if (x.k == y.k) x.p = x.m > y.m ? inf : -inf;
 		else x.p = div(y.m - x.m, x.k - y.k);
 		return x.p;
