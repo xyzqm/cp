@@ -3,16 +3,16 @@
 #include <functional>
 using namespace std;
 
-map<pair<int, int>, int> c;
+map<pair<int, int>, int> C;
 
 double phi = 0.618;
 
 int query(int l, int r) {
   if (l == r) return 0;
-  if (c[{l, r}]) return c[{l, r}];
+  if (C[{l, r}]) return C[{l, r}];
   cout << "? " << l << " " << r << endl;
-  cin >> c[{l, r}];
-  return c[{l, r}];
+  cin >> C[{l, r}];
+  return C[{l, r}];
 }
 
 int bs(int l, int r, function<bool(int)> f) {
@@ -36,7 +36,7 @@ int solve(int l, int r) {
 }
 
 void ac() {
-  c.clear();
+  C.clear();
   int n; cin >> n;
   int r = solve(1, n);
   cout << "! " << r << endl;
