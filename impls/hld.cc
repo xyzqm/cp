@@ -1,73 +1,52 @@
-// https://cses.fi/problemset/task/2134
-#include <iostream>
-#include <vector>
-#include <algorithm>
-using namespace std;
-const int N = 2e5 + 1;
-int n, t = 0, v[N], p[N], d[N], id[N], hv[N], sz[N], st[2 * N];
-vector<int> g[N];
-
-// segment tree
-void build() {
-  for (int i = n; --i > 0; ) st[i] = max(st[i << 1], st[i << 1 | 1]);
-}
-
-void upd(int i, int x) {
-  for (st[i += n] = x; i > 1; i >>= 1) st[i >> 1] = max(st[i], st[i ^ 1]);
-}
-
-int query(int l, int r) {
-  int res = 0;
-  for (l += n, r += n; l < r; l >>= 1, r >>= 1) {
-    if (l & 1) res = max(res, st[l++]);
-    if (r & 1) res = max(res, st[--r]);
+#include "graph.cc"
+template <typename T, typename E>
+struct HLD {
+  Tree<E>& t;
+  SGT<T> sgt;
+  int I[N], U[N], i = 0;
+  function<T(T, T)> f; T t0;
+  HLD(Tree<E> &t, T x) : t(t) { t0 = x; }
+  HLD& fn(function<T(T, T)> f) { return sgt.fn(this->f = f, t0), *this; }
+  HLD& hld() {
+    t.dfs();
+    dfs_hld(t.r);
+    return *this;
   }
-  return res;
-}
+  void dfs_hld(int x) {
+    I[x] = i++;
+    auto e = t.ex(x);
+    for (int &y : e) if (t.s[y] > t.s[e[0]]) swap(e[0], y);
+    for (int y : e) if (y != t.p[x]) {
+      U[y] = (y == e[0]? U[x] : y);
+      dfs_hld(y);
+    }
+  }
+  HLD &upd(int u, T x) { assert(u <= t.n); return sgt.upd(I[u], x), *this; }
+  T query(int u, int v) {
+    assert(u <= t.n && v <= t.n);
+    T x = t0;
+    for (; U[u] != U[v]; u = t.p[U[u]]) {
+      if (t.d[U[u]] < t.d[U[v]]) swap(u, v);
+      x = f(x, sgt.query(I[U[u]], I[u] + 1));
+    }
+    if (t.d[u] > t.d[v]) swap(u, v);
+    return f(x, sgt.query(I[u], I[v] + 1));
+  }
+};
 
-// HLD
-int dfs(int x = 1) {
-  if (x > 1) g[x].erase(find(g[x].begin(), g[x].end(), p[x]));
-  for (int &y : g[x]) {
-    p[y] = x, d[y] = d[x] + 1;
-    sz[x] += dfs(y);
-    if (sz[y] > sz[g[x][0]]) swap(y, g[x][0]);
-  }
-  return ++sz[x];
-}
+/* int main() { */
+/*   cin.tie(0)->sync_with_stdio(0); */
+/*   int n, q; cin >> n >> q; */
+/*   for (int i = 0; i < n; i++) cin >> a[i]; */
+/*   Tree<int> t(n); */
+/*   t.input(); */
+/*   auto h = HLD(t.root(0), 0LL); */
+/*   h.fn([](ll x, ll y) { return x + y; }).hld(); */
+/*   for (int i = 0; i < n; i++) h.upd(i, a[i]); */
+/*   while (q--) { */
+/*     int t, x, y; cin >> t >> x >> y; */
+/*     if (!t) h.upd(x, y); */
+/*     else cout << h.query(x, y) << endl; */
+/*   } */
+/* } */
 
-void hld(int x = 1) {
-  id[x] = t++;
-  for (int y : g[x]) {
-    hv[y] = (y == g[x][0] ? hv[x] : y);
-    hld(y);
-  }
-}
-
-int path(int x, int y) {
-  int res = 0;
-  for (; hv[x] != hv[y]; y = p[hv[y]]) {
-    if (d[hv[x]] > d[hv[y]]) swap(x, y);
-    res = max(res, query(id[hv[y]], id[y] + 1));
-  }
-  if (d[x] > d[y]) swap(x, y);
-  return max(res, query(id[x], id[y] + 1));
-}
-
-int main() {
-  int q; cin >> n >> q;
-  for (int i = 1; i <= n; i++) cin >> v[i];
-  for (int i = 1; i < n; i++) {
-    int x, y; cin >> x >> y;
-    g[x].push_back(y);
-    g[y].push_back(x);
-  }
-  dfs(); hld();
-  for (int i = 1; i <= n; i++) st[id[i] + n] = v[i];
-  build();
-  while (q--) {
-    int a, b; cin >> t >> a >> b;
-    if (t == 1) upd(id[a], b);
-    else cout << path(a, b) << "\n "[q > 0];
-  }
-}

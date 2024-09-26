@@ -1,5 +1,4 @@
 // https://judge.yosupo.jp/problem/point_add_range_sum
-#include <iostream>
 #include <cassert>
 #include <functional>
 #include "constants.h"
