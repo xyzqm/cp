@@ -1,5 +1,5 @@
 // https://www.acmicpc.net/problem/20603
-#include "hld.cc"
+#include "hld.h"
 #include <array>
 #include <climits>
 #include <cstdlib>

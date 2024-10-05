@@ -1,23 +1,26 @@
-#include "graph.cc"
-template <typename T, typename E>
+#include <functional>
+#include "graph.h"
+using namespace std;
+template <typename T>
 struct HLD {
-  Tree<E>& t;
+  Tree& t;
   SGT<T> sgt;
-  int I[N], U[N], i = 0;
+  int I[N], U[N], D[N], i = 0;
   function<T(T, T)> f; T t0;
-  HLD(Tree<E> &t, T x) : t(t) { t0 = x; }
+  HLD(Tree &t, T x) : t(t) { t0 = x; }
   HLD& fn(function<T(T, T)> f) { return sgt.fn(this->f = f, t0), *this; }
   HLD& hld() {
     t.dfs();
+    U[t.r] = t.r;
     dfs_hld(t.r);
     return *this;
   }
   void dfs_hld(int x) {
     I[x] = i++;
-    auto e = t.ex(x);
-    for (int &y : e) if (t.s[y] > t.s[e[0]]) swap(e[0], y);
-    for (int y : e) if (y != t.p[x]) {
-      U[y] = (y == e[0]? U[x] : y);
+    for (int &y : t.g[x]) if (t.s[y] > t.s[t.g[x][0]]) swap(t.g[x][0], y);
+    for (int y : t.g[x]) {
+      U[y] = (y == t.g[x][0] ? U[x] : y);
+      D[U[y]] = y;
       dfs_hld(y);
     }
   }
