@@ -41,7 +41,6 @@ Tree t(N);
 vector<int> leaves;
 int nf(int k, int l, int r, bool v) {
   a[fi] = {k, l, r, v};
-  /* cout << a[fi] << endl << v << endl; */
   if (k) {
     if (l >= 0) t.undirected(fi, l);
     if (r >= 0) t.undirected(fi, r);
@@ -93,7 +92,6 @@ int main() {
   cin >> s;
   s += '\0';
   int r = parse(ops.size() - 1);
-  /* cout << a[r].v << endl; */
   assert(i == s.size() - 1);
   sort(leaves.begin(), leaves.end(), [&](int i, int j) { return a[i].l < a[j].l; });
   t.root(r);
