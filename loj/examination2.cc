@@ -1,40 +1,39 @@
 #define SOURCE
 #ifndef COMPILED
-const int N = 1e3 + 1;
+const int N = 1e4 + 1;
 #else
-const int N = 4e5 + 1;
+const int N = 6e5 + 1;
 #endif
 #include "hld.h"
-#include "linear.h"
-using L = Line<int>;
 using P = pair<int, int>;
 
 string s;
 int i = 0, fi = 0;
 
-
 const string ops = "[(!&^|";
 struct Function {
-  int k = 4, l = 0, r = 0;
-  bool v = 0;
-  L transform();
+  int k, l, r;
+  bool v;
+  short transform();
 } a[N];
 
-ostream& operator<<(ostream &os, Function f) { // prints function in prefix
+ostream& operator<<(ostream &os, Function f) { // prints function in prefix form
   os << ops[f.k];
   if (!f.k) os << f.l << "]";
-  if (f.k > 0 && f.l >= 0) os << a[f.l];
-  if (f.k > 0 && f.r >= 0) os << a[f.r];
+  if (f.k > 0 && f.l >= 0) os << "(" << a[f.l] << ")";
+  if (f.k > 0 && f.r >= 0) os << "(" << a[f.r] << ")";
+  os << ":" << f.v;
   return os;
 }
 
-L Function::transform() {
-  if (k == 0) return L{0, v};
+// 2 is same, 3 is flip
+short Function::transform() {
+  if (k == 0) return v;
   else if (k == 1) assert(false); // we don't care about parentheses
-  else if (k == 2) return L{-1, 1}; // !
-  else if (k == 3) return a[l].v ? L{1, 0} : L{0, 0}; // &
-  else if (k == 4) return a[l].v ? L{-1, 1} : L{1, 0}; // ^
-  else return a[l].v ? L{0, 1} : L{1, 0}; // |
+  else if (k == 2) return 3; // !
+  else if (k == 3) return 2 * a[l].v; // &
+  else if (k == 4) return  2 + a[l].v; // ^
+  else return 2 - a[l].v; // |
 }
 
 Tree t(N);
@@ -42,6 +41,7 @@ Tree t(N);
 vector<int> leaves;
 int nf(int k, int l, int r, bool v) {
   a[fi] = {k, l, r, v};
+  /* cout << a[fi] << endl << v << endl; */
   if (k) {
     if (l >= 0) t.undirected(fi, l);
     if (r >= 0) t.undirected(fi, r);
@@ -78,9 +78,9 @@ int parse(int k) {
     while (s[i] == ops[k]) {
       i++;
       int b = parse(k - 1);
-      int l = ::a[a].v, r = ::a[b].v, x;
+      bool l = ::a[a].v, r = ::a[b].v, x;
       if (k == 3) x = l & r;
-      if (k == 4) x = l ^ r;
+      else if (k == 4) x = l ^ r;
       else x = l | r;
       a = nf(k, a, b, x);
     }
@@ -93,17 +93,22 @@ int main() {
   cin >> s;
   s += '\0';
   int r = parse(ops.size() - 1);
+  /* cout << a[r].v << endl; */
+  assert(i == s.size() - 1);
   sort(leaves.begin(), leaves.end(), [&](int i, int j) { return a[i].l < a[j].l; });
   t.root(r);
-  auto h = HLD(t, L{1, 0}).fn([](L x, L y) { return x(y); }).hld();
+  auto h = HLD(t, 2).fn([](short x, short y) -> short {
+    if (x < 2) return x;
+    else if (x == 2) return y;
+    else if (y < 2) return 1 - y;
+    else return 5 - y;
+  }).hld();
   for (int i = 0; i < fi; i++) {
-    /* cout << t.p[i] << ":" << h.U[i] << " "; */
     if (min(a[i].l, a[i].r) >= 0) {
       if (h.U[a[i].l] == h.U[i]) swap(a[i].l, a[i].r); // l should be light child
     }
     h.upd(i, a[i].transform());
   }
-  /* cout << endl; */
   vector<P> Q(q);
   vector<int> R(q);
   for (int i = 0; i < q; i++) {
@@ -111,25 +116,24 @@ int main() {
     Q[i].second = i;
   }
   sort(Q.begin(), Q.end());
-  int li = 0;
+  auto it = leaves.begin();
   for (auto [x, i] : Q) {
-    while (li < leaves.size() && x >= a[leaves[li]].l) {
-      int c = leaves[li];
-      /* cout << a[c].l << endl; */
-      a[c].v = 1;
-      h.upd(c, L{0, 1});
+    while (it != leaves.end() && x >= a[*it].l) {
+      int c = *it;
+      h.upd(c, a[c].v = 1);
       while (c != r) {
+        assert(c == *it || c == a[t.p[c]].l);
         c = t.p[c];
         h.upd(c, a[c].transform());
         c = h.U[c];
-        L l = h.query(c, h.D[c]);
-        assert(!l.w);
-        a[c].v = l.b;
-        /* cout << c << " " << a[c].v << endl; */
+        assert(t.g[h.D[c]].size() == 0);
+        int l = h.query(c, h.D[c]);
+        assert(l < 2);
+        a[c].v = l;
       }
-      li++;
+      it++;
     }
     R[i] = a[r].v;
   }
   for (int x: R) cout << (x ? "True\n" : "False\n");
-} 
+}
