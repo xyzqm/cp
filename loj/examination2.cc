@@ -36,14 +36,14 @@ short Function::transform() {
   else return 2 - a[l].v; // |
 }
 
-Tree t(N);
+Tree<int> t(N);
 
 vector<int> leaves;
 int nf(int k, int l, int r, bool v) {
   a[fi] = {k, l, r, v};
   if (k) {
-    if (l >= 0) t.undirected(fi, l);
-    if (r >= 0) t.undirected(fi, r);
+    if (l >= 0) t.u(fi, l);
+    if (r >= 0) t.u(fi, r);
   }
   else leaves.push_back(fi);
   return fi++;
@@ -92,7 +92,6 @@ int main() {
   cin >> s;
   s += '\0';
   int r = parse(ops.size() - 1);
-  assert(i == s.size() - 1);
   sort(leaves.begin(), leaves.end(), [&](int i, int j) { return a[i].l < a[j].l; });
   t.root(r);
   auto h = HLD(t, 2).fn([](short x, short y) -> short {
@@ -124,7 +123,6 @@ int main() {
         c = t.p[c];
         h.upd(c, a[c].transform());
         c = h.U[c];
-        assert(t.g[h.D[c]].size() == 0);
         int l = h.query(c, h.D[c]);
         assert(l < 2);
         a[c].v = l;

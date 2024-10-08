@@ -3,9 +3,6 @@
 #include <functional>
 #include "constants.h"
 using namespace std;
-#ifndef SOURCE 
-const int N = 1e5 + 1;
-#endif
 template <typename T>
 // 0-indexed segment tree
 struct SGT {
@@ -35,17 +32,3 @@ struct SGT {
   }
   void build (T* a) { build(a, a + N, 1); }
 };
-
-/* int main() { */
-/*   SGT<ll> sgt; */
-/*   int n, q; cin >> n >> q; */
-/*   for (int i = 0; i < n; i++) cin >> a[i]; */
-/*   sgt.fn([](ll x, ll y) { return x + y; }).build(a); */
-/*   while (q--) { */
-/*       int x, y, z; */
-/*       cin >> x >> y >> z; */
-/*       if (!x) sgt.upd(y, z); */
-/*       else cout << sgt.query(y, z) << endl; */
-/*   } */
-/* } */
-
