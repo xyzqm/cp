@@ -14,13 +14,18 @@ struct W { // weighted edge
   operator int() const { return v; }
 };
 
-template <typename T, class V = vector<T>>
+template <int N, typename T, class V = vector<T>>
 struct Graph {
   int n, m;
   Graph(int n, int m) : n(n), m(m) {}
   V g[N];
   void add(int u, T e) { ::add(g[u], e); }
-  void u(int u, int v);
+  void u(int u, int v) {
+    if constexpr (is_same_v<T, int>) {
+      add(u, v);
+      add(v, u);
+    }
+  }
   // undirected input
   Graph& input() {
     for (int i = 0; i < m; i++) {
@@ -33,21 +38,28 @@ struct Graph {
   }
 };
 
-template <>
-void Graph<int>::u(int u, int v) {
-  add(u, v);
-  add(v, u);
-}
+#ifdef LCA
+#define EULER
+#include "sparse.h"
+#endif
 
-template <typename T, typename V = vector<T>>
-struct Tree : Graph<T, V> {
+template <int N, typename T, typename V = vector<T>>
+struct Tree : Graph<N, T, V> {
   int r, s[N], p[N], d[N]{};
-  Tree(int n) : Graph<T, V>(n, n - 1) {
+  #ifdef EULER
+  int I[2 * N], o[2 * N], t = 0;
+  ST<2 * N> st{[&](int x, int y) { return d[x] < d[y] ? x : y; }}; 
+  #endif
+  Tree(int n) : Graph<N, T, V>(n, n - 1) {
     fill(s, s + n + 1, 1); // TODO: allow initializing weighted nodes later
   }
   Tree& root(int x) { return r = p[x] = x, *this; }
   int dfs(int x) {
-    for (T e : this->g[x]) if (e != p[x]) {
+    for (T e : this->g[x]) {
+      #ifdef EULER
+      o[I[x] = t++] = x;
+      #endif
+      if (e == p[x]) continue;
       int w = 1;
       if constexpr (is_same_v<T, W>) w = e.w;
       d[e] = d[p[e] = x] + w;
@@ -55,6 +67,9 @@ struct Tree : Graph<T, V> {
     }
     return s[x];
   }
+  #ifdef LCA
+  
+  #endif
   Tree& dfs() { return dfs(r), *this; }
-  Tree& input() { return Graph<T, V>::input(), *this; }
+  Tree& input() { return this->input(), *this; }
 };
