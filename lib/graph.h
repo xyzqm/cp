@@ -3,7 +3,7 @@
 #include <vector>
 #include <functional>
 #include <algorithm>
-#include "sgt.h"
+#include "constants.h"
 #include "util.h"
 using namespace std;
 
@@ -14,7 +14,7 @@ struct W { // weighted edge
   operator int() const { return v; }
 };
 
-template <int N, typename T, class V = vector<T>>
+template <int N, typename T = int, class V = vector<T>>
 struct Graph {
   int n, m;
   Graph(int n, int m) : n(n), m(m) {}
@@ -43,11 +43,11 @@ struct Graph {
 #include "sparse.h"
 #endif
 
-template <int N, typename T, typename V = vector<T>>
+template <int N, typename T = int, typename V = vector<T>>
 struct Tree : Graph<N, T, V> {
   int r, s[N], p[N], d[N]{};
   #ifdef EULER
-  int I[2 * N], o[2 * N], t = 0;
+  int I[N], o[2 * N], t = 0;
   ST<2 * N> st{[&](int x, int y) { return d[x] < d[y] ? x : y; }}; 
   #endif
   Tree(int n) : Graph<N, T, V>(n, n - 1) {
@@ -65,11 +65,17 @@ struct Tree : Graph<N, T, V> {
       d[e] = d[p[e] = x] + w;
       s[x] += dfs(e);
     }
+    #ifdef LCA
+    if (x == r) st.build(o);
+    #endif
     return s[x];
   }
   #ifdef LCA
-  
+  int lca(int u, int v) {
+    if (I[u] > I[v]) swap(u, v);
+    return st.F(I[u], I[v] + 1);
+  }
   #endif
   Tree& dfs() { return dfs(r), *this; }
-  Tree& input() { return this->input(), *this; }
+  Tree& input() { return Graph<N, T, V>::input(), *this; }
 };

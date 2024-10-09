@@ -3,7 +3,7 @@
 #include <functional>
 #include "constants.h"
 using namespace std;
-template <typename T>
+template <int N, typename T>
 // 0-indexed segment tree
 struct SGT {
   T a[2 * N], t0;
