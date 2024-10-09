@@ -9,6 +9,6 @@ int main() {
   t.input().root(1).dfs();
   while (q--) {
     int u, v; cin >> u >> v;
-    cout << t.d[u] + t.d[v] - 2 * t.d[t.lca(u, v)] << endl;
+    cout << t.D(u, v) << endl;
   }
 }
