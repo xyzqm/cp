@@ -4,7 +4,7 @@
 using P = pair<int, int>;
 const int N = 1e5 + 1;
 
-int red[N];
+ll red[N];
 Tree<N> t;
 void upd(int x) {
   int y = x;

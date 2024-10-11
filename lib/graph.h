@@ -70,7 +70,7 @@ struct Tree : Graph<N, T> {
       o[I[x] = t++] = x;
       #endif
       if (e == p[x]) continue;
-      int w = 1;
+      ll w = 1;
       if constexpr (is_same_v<T, W>) w = e.w;
       d[e] = d[p[e] = x] + w;
       s[x] += dfs(e);
@@ -85,7 +85,7 @@ struct Tree : Graph<N, T> {
     if (I[u] > I[v]) swap(u, v);
     return st.F(I[u], I[v] + 1);
   }
-  int D(int u, int v) {
+  ll D(int u, int v) {
     return d[u] + d[v] - 2 * d[lca(u, v)];
   }
   #endif

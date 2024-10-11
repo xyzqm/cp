@@ -8,7 +8,8 @@ template <int N, typename T = int>
 struct SGT {
   T a[2 * N], t0;
   function<T(T, T)> f;
-  SGT& fn(function<T(T, T)> f, T x) { return this->f = f, t0 = x, *this; }
+  bool s;
+  SGT& fn(function<T(T, T)> f, bool s, T x) { return this->f = f, this->s = s, t0 = x, *this; }
   SGT& fill(T x) { return ::fill(a, a + 2 * N, x), *this; }
   // query on range [l, r)
   T query(int l, int r) {
@@ -20,6 +21,7 @@ struct SGT {
     return f(tl, tr);
   }
   void upd(int i, T x) {
-    for (a[i += N] = x; i >>= 1; ) a[i] = f(a[i << 1], a[i << 1|1]);
+    i += N;
+    for (a[i] = s ? x : f(x, a[i]); i >>= 1; ) a[i] = f(a[i << 1], a[i << 1|1]);
   }
 };
