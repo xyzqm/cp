@@ -4,11 +4,10 @@
 #include <set>
 #include "graph.h"
 using namespace std;
-using P = pair<int, int>;
 
 template <int N, typename T>
 struct Centroid {
-  Tree<N, T, set<T>> &t;
+  Tree<N, T> &t;
   int r;
   vector<int> g[N];
   int decompose(int x, int n) {

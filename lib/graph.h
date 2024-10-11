@@ -4,7 +4,6 @@
 #include <functional>
 #include <algorithm>
 #include "constants.h"
-#include "util.h"
 using namespace std;
 
 struct W { // weighted edge
@@ -17,12 +16,13 @@ struct W { // weighted edge
   bool operator<(int x) const { return v < x; }
 };
 
-template <int N, typename T = int, class V = vector<T>>
+template <int N, typename T = int>
 struct Graph {
   int n, m;
+  Graph() {}
   Graph(int n, int m) : n(n), m(m) {}
-  V g[N];
-  void add(int u, T e) { ::add(g[u], e); }
+  vector<T> g[N];
+  void add(int u, T e) { g[u].push_back(e); }
   void u(int u, int v) {
     if constexpr (is_same_v<T, int>) {
       add(u, v);
@@ -33,9 +33,9 @@ struct Graph {
   Graph& input() {
     for (int i = 0; i < m; i++) {
       int u; T v; cin >> u >> v;
-      ::add(g[u], v);
-      if constexpr (is_same_v<T, W>) ::add(g[v], W{u, v.w});
-      else ::add(g[v], u);
+      g[u].push_back(v);
+      if constexpr (is_same_v<T, W>) g[v].push_back({u, v.w});
+      else g[v].push_back(u);
     }
     return *this;
   }
@@ -46,15 +46,19 @@ struct Graph {
 #include "sparse.h"
 #endif
 
-template <int N, typename T = int, typename V = vector<T>>
-struct Tree : Graph<N, T, V> {
-  int r, s[N], p[N], d[N]{};
-  Tree(int n) : Graph<N, T, V>(n, n - 1) {
+template <int N, typename T = int>
+struct Tree : Graph<N, T> {
+  int r, s[N], p[N];
+  ll d[N]{};
+  Tree() {}
+  Tree(int n) : Graph<N, T>(n, n - 1) {
     fill(s, s + n + 1, 1); // TODO: allow initializing weighted nodes later
   }
   Tree& root(int x) { return r = p[x] = x, *this; }
   #ifdef EULER
-  int I[N], o[2 * N], t = 0;
+  int I[N], o[2 * N]{}, t = 0;
+  #endif
+  #ifdef LCA
   ST<2 * N> st{[&](int x, int y) { return d[x] < d[y] ? x : y; }}; 
   #endif
   int dfs(int x) {
@@ -82,25 +86,28 @@ struct Tree : Graph<N, T, V> {
     return d[u] + d[v] - 2 * d[lca(u, v)];
   }
   #endif
-  #define CENTROID
   #ifdef CENTROID
-  int cr;
+  int cr, cp[N]{}, rem[N]{}; // cp: centroid parent
   vector<int> cg[N];
-  int decompose(int x, int n) {
-    for (int y : this->g[x]) {
-      if (s[y] > n / 2) return decompose(y, n);
+  int sz(int x, int p = -1) {
+    s[x] = 0;
+    for (int y : this->g[x]) if (!rem[y] && y != p) s[x] += sz(y, x);
+    return ++s[x];
+  }
+  int decompose(int x, int n, int p = -1) {
+    for (int y : this->g[x]) if (!rem[y] && y != p) {
+      if (s[y] > n / 2) return decompose(y, n, x);
     }
-    for(int y : this->g[x]) {
-      W e = *this->g[y].find(x);
-      this->g[y].erase(e);
-      add(cg[x], decompose(y, s[y]));
-      add(this->g[y], e);
+    rem[x] = true;
+    for(int y : this->g[x]) if (!rem[y]) {
+      y = decompose(y, sz(y));
+      cg[cp[y] = x].push_back(y);
     }
     return x;
   }
-  Tree& decompose() { return cr = decompose(r, s[r]), *this; }
+  Tree& decompose() { return cr = decompose(r, sz(r)), *this; }
   #endif
 
   Tree& dfs() { return dfs(r), *this; }
-  Tree& input() { return Graph<N, T, V>::input(), *this; }
+  Tree& input() { return Graph<N, T>::input(), *this; }
 };
