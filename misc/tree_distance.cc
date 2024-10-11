@@ -45,15 +45,11 @@ int main() {
   for (int i = 0; i < q; i++) {
     r[i] = inf;
     int u, v; cin >> u >> v;
-    /* for (auto [k, j, d] : e) if (u <= k && j <= v) r[i] = min(r[i], d); */
     e.push_back({u, v, -i});
-    /* cout << (r[i] < inf ? r[i] : -1) << endl; */
   }
   sort(e.begin(), e.end());
   for (auto [u, v, w] : e) {
-    if (w < 1) {
-      r[-w] = sgt.query(u, v);
-    }
+    if (w < 1) r[-w] = sgt.query(u, v);
     else sgt.upd(u, w);
   }
   for (int i = 0; i < q; i++) {
