@@ -21,6 +21,7 @@ struct Graph {
   int n, m;
   Graph() {}
   Graph(int n, int m) : n(n), m(m) {}
+  Graph& init(int n, int m) { return this->n = n, this->m = m, *this; }
   vector<T> g[N];
   void add(int u, T e) { g[u].push_back(e); }
   void u(int u, int v) {
@@ -51,8 +52,10 @@ struct Tree : Graph<N, T> {
   int r, s[N], p[N];
   ll d[N]{};
   Tree() {}
-  Tree(int n) : Graph<N, T>(n, n - 1) {
+  Tree& init(int n) {
+    Graph<N, T>::init(n, n - 1);
     fill(s, s + n + 1, 1); // TODO: allow initializing weighted nodes later
+    return *this;
   }
   Tree& root(int x) { return r = p[x] = x, *this; }
   #ifdef EULER
@@ -62,7 +65,7 @@ struct Tree : Graph<N, T> {
   ST<2 * N> st{[&](int x, int y) { return d[x] < d[y] ? x : y; }}; 
   #endif
   int dfs(int x) {
-    for (T e : this->g[x]) {
+    for (T e : this->g[x]) { 
       #ifdef EULER
       o[I[x] = t++] = x;
       #endif
