@@ -3,10 +3,12 @@
 #include <utility>
 #include <cassert>
 #include <iostream>
-extern const int M;
 using namespace std;
+template <int M>
 struct mint;
-using P = pair<mint, mint>;
+template <int M>
+using P = pair<mint<M>, mint<M>>;
+template <int M>
 struct mint {
   ll v = 0;
   mint() {}
@@ -26,11 +28,11 @@ struct mint {
     mint i = 1;
     while ((i * i - v).sym().v != M - 1) i = i + 1;
     mint w = i * i - v;
-    auto mul = [&](P x, P y) { return P{
+    auto mul = [&](P<M> x, P<M> y) { return P<M>{
       x.first * y.first + x.second * y.second * w,
       x.first * y.second + x.second * y.first
     }; }; 
-    P c = {i, 1}, r = {1, 0};
+    P<M> c = {i, 1}, r = {1, 0};
     for (int i = 1; i < 2 * M; i <<= 1) {
       if (((M + 1) / 2) & i) r = mul(r, c);
       c = mul(c, c);
@@ -41,3 +43,4 @@ struct mint {
   }
   mint operator/(mint o) { return *this * o.inv(); }
 };
+#define mint mint<M>
