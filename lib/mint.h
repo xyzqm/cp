@@ -4,10 +4,12 @@
 #include <cassert>
 #include <iostream>
 using namespace std;
+#ifdef SQRT
 template <int M>
 struct mint;
 template <int M>
 using P = pair<mint<M>, mint<M>>;
+#endif
 template <int M>
 struct mint {
   ll v = 0;
@@ -19,10 +21,14 @@ struct mint {
   mint operator-(const mint &o) const { return v - o.v; }
   mint& operator-=(const mint& o) { mint t = v - o.v; v = t.v; return *this; }
   mint operator^(int y) const { mint r = 1, x = v; for (y <<= 1; y >>= 1; x = x * x) if (y & 1) r = r * x; return r; }
+  mint operator/(mint o) { return *this * o.inv(); }
   mint inv() const { assert(v); return *this ^ M - 2; }
+  #ifdef SQRT
   mint sym() { return *this ^ (M - 1) / 2; } // legendre symbol: 1 -> qresidue, -1 -> non-residue
+  #endif
   friend istream& operator>>(istream& s, mint& v) { s >> v.v; return s; }
   friend ostream& operator<<(ostream& s, const mint& v) { s << v.v; return s; }
+  #ifdef SQRT
   mint sqrt() {
     if (!v) return 0;
     mint i = 1;
@@ -41,6 +47,6 @@ struct mint {
     if (r.first.v < M / 2) return r.first;
     return r.first * -1;
   }
-  mint operator/(mint o) { return *this * o.inv(); }
+  #endif
 };
 #define mint mint<M>
