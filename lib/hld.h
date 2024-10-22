@@ -1,13 +1,14 @@
 #include <functional>
 #include "graph.h"
+#include "sgt.h"
 using namespace std;
-template <typename T, typename E>
+template <int N, typename T, typename E>
 struct HLD {
-  Tree<E>& t;
-  SGT<T> sgt;
+  Tree<N, E>& t;
+  SGT<N, T> sgt;
   int I[N], U[N], D[N], i = 0;
   function<T(T, T)> f; T t0;
-  HLD(Tree<E> &t, T x) : t(t) { t0 = x; }
+  HLD(Tree<N, E> &t, T x) : t(t) { t0 = x; }
   HLD& fn(function<T(T, T)> f) { return sgt.fn(this->f = f, t0), *this; }
   HLD& hld() {
     t.dfs();

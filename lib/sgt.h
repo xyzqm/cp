@@ -20,6 +20,7 @@ struct SGT {
     }
     return f(tl, tr);
   }
+  T get(int i) { return a[N + i]; }
   void upd(int i, T x) {
     i += N;
     for (a[i] = s ? x : f(x, a[i]); i >>= 1; ) a[i] = f(a[i << 1], a[i << 1|1]);

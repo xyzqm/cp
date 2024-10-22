@@ -2,7 +2,6 @@
 #include "hld.h"
 #include <array>
 #include <climits>
-#include <cstdlib>
 #include <random>
 
 const int K = 75;
