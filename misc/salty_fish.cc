@@ -48,7 +48,6 @@ void ac() {
 }
 
 int main() {
-  d[0] = -1;
   int t; cin >> t;
   while (t--) ac();
 }
