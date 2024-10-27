@@ -1,6 +1,4 @@
 #include <iostream>
-#include <vector>
-#include <tuple>
 #include <algorithm>
 #include <set>
 using namespace std;
