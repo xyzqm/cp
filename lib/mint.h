@@ -15,6 +15,7 @@ struct mint {
   ll v = 0;
   mint() {}
   mint(ll v) { this->v = (v % M + M) % M; }
+  operator bool() const { return v; }
   mint operator+(const mint &o) const { return v + o.v; }
   mint& operator+=(const mint& o) { v = (v + o.v) % M; return *this; }
   mint operator*(const mint &o) const { return v * o.v; }
@@ -37,7 +38,7 @@ struct mint {
     auto mul = [&](P<M> x, P<M> y) { return P<M>{
       x.first * y.first + x.second * y.second * w,
       x.first * y.second + x.second * y.first
-    }; }; 
+    }; };
     P<M> c = {i, 1}, r = {1, 0};
     for (int i = 1; i < 2 * M; i <<= 1) {
       if (((M + 1) / 2) & i) r = mul(r, c);
