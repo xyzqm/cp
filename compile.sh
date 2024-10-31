@@ -1,3 +1,4 @@
-echo '#include "bits/stdc++.h"' >scratch.cc
-g++ -E -P -I./lib -DCOMPILED -nostdinc++ $1 >>scratch.cc
+g++ -E -P -C -I./lib -DCOMPILED -nostdinc++ $1 >scratch.cc
+echo "#include <bits/stdc++.h>
+$(sed '/./,$!d' scratch.cc)" >scratch.cc
 grep . scratch.cc | pbcopy
