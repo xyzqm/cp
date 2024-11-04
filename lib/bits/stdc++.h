@@ -29,7 +29,6 @@
 #include <cwctype>
 #endif
 
-// C++
 #include <algorithm>
 #include <bitset>
 #include <complex>
@@ -84,4 +83,3 @@
 #include <unordered_map>
 #include <unordered_set>
 #endif
-
