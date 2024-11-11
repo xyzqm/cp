@@ -22,7 +22,7 @@ struct mint {
   mint& operator-=(const mint& o) { mint t = v - o.v; v = t.v; return *this; }
   mint exp(int y) const { mint r = 1, x = v; for (y <<= 1; y >>= 1; x = x * x) if (y & 1) r = r * x; return r; }
   mint operator/(mint o) { return *this * o.inv(); }
-  mint inv() const { assert(v); return *this ^ M - 2; }
+  mint inv() const { assert(v); return exp(M - 2); }
   #ifdef SQRT
   mint sym() { return *this ^ (M - 1) / 2; } // legendre symbol: 1 -> qresidue, -1 -> non-residue
   #endif
