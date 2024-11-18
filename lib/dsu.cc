@@ -21,4 +21,4 @@ struct DSU {
   	s[x] += s[y];
   	return true;
   }
-}
+};
