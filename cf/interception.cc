@@ -12,11 +12,9 @@ void ac() {
     int n, m; cin >> n >> m;
     memset(g, 0, sizeof g);
     U(0, 1), U(n, n + 1);
-    vector<pair<int, int>> gg;
     while (m--) {
         int u, v; cin >> u >> v;
         U(u, v);
-        gg.push_back({u, v});
     }
     vector<FE> fg;
     for (int i = 0; i <= n + 1; i++) {
