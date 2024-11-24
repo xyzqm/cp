@@ -12,7 +12,6 @@ template <int N>
 struct F {
     inline static mint w = mint(3).exp((M - 1) / (N << 1));
     inline static mint iw = w.inv();
-    inline static mint p[N << 1]{}, ip[N << 1]{}; // powers and inverse powers
     mint a[N << 1]{}, f[N << 1]{}; // a is actual array, f is for fft values
     int n = 1; // should always be power of two
     F(initializer_list<mint> l = {}, bool t = false) {
@@ -28,17 +27,12 @@ struct F {
     }
     F& fft(int n = 0, bool inv = false) {
         if (!n) n = this->n;
-        if (!p[0].v) { // initialize array of powers if not done yet
-            p[0] = 1; for (int i = 1; i < (N << 1); i++) p[i] = p[i - 1] * w;
-            ip[0] = 1; for (int i = 1; i < (N << 1); i++) ip[i] = ip[i - 1] * iw;
-        }
         if (!inv) for (int i = 0; i < n; i++) f[i] = i < this->n ? a[i] : 0;
         for (int _ = 0; (1 << _) < n; _++) {
             int s = inv ? 1 << _ : n >> 1 >> _; // stride
             mint dw = w.exp(N / s);
             if (inv) dw = dw.inv();
             mint W = 1;
-            // cout << s << " " << dw << endl;
             for (int i = 0; i < n; i++) if (!(i & s)) {
                 // cout << W << " " << (inv ? ip : p)[N / s * (i & (s - 1))] << endl;
                 W = (i & (s - 1) ? W * dw : 1);
@@ -49,6 +43,7 @@ struct F {
             }
             // cout << endl;
         }
+        for (int i = 0; i < n; i++) cout << f[i] << " \n"[i == n - 1];
         if (inv) for (int i = 0; i < n; i++) a[i] = f[i];
         return *this;
     }
