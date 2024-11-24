@@ -50,6 +50,8 @@ struct F : vector<T> {
         return *this;
     }
     F operator+(const F &o) const { return F(*this) += o; }
+    F& operator+=(int v) { at(0) += v; return *this; }
+    F operator+(int v) const { return F(*this) += v; }
     F operator*=(const F &o) {
         int n = 2 * max(size(), o.size());
         resize(n);
@@ -58,10 +60,8 @@ struct F : vector<T> {
         for (int i = 0; i < n; i++) at(i) *= b[i];
         return fft(true);
     }
-    // F& operator*=(int v) { for (T &x : *this) x *= v; return *this; }
-    // F operator*(int v) const { return F(*this) *= v; }
-    // F& operator+=(int v) { for (T &x : *this) x += v; return *this; }
-    // F operator+(int v) const { return F(*this) += v; }
+    F& operator*=(int v) { for (T &x : *this) x *= v; return *this; }
+    F operator*(int v) const { return F(*this) *= v; }
     F operator*(const F &o) const { return F(*this) *= o; }
     F operator/=(const F &o) { return *this *= o.inv(); }
     F operator/(const F &o) const { return F(*this) /= o; }
