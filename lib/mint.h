@@ -29,22 +29,22 @@ struct mint {
     friend ostream& operator<<(ostream& s, const mint& v) { s << v.v; return s; }
     #ifdef SQRT
     mint sqrt() {
-    if (!v) return 0;
-    mint i = 1;
-    while ((i * i - v).sym().v != M - 1) i = i + 1;
-    mint w = i * i - v;
-    auto mul = [&](P<M> x, P<M> y) { return P<M>{
-        x.first * y.first + x.second * y.second * w,
-        x.first * y.second + x.second * y.first
-    }; };
-    P<M> c = {i, 1}, r = {1, 0};
-    for (int i = 1; i < 2 * M; i <<= 1) {
-        if (((M + 1) / 2) & i) r = mul(r, c);
-        c = mul(c, c);
-    }
-    assert(r.second.v == 0 && (r.first * r.first).v == v);
-    if (r.first.v < M / 2) return r.first;
-    return r.first * -1;
+        if (!v) return 0;
+        mint i = 1;
+        while ((i * i - v).sym().v != M - 1) i = i + 1;
+        mint w = i * i - v;
+        auto mul = [&](P<M> x, P<M> y) { return P<M>{
+            x.first * y.first + x.second * y.second * w,
+            x.first * y.second + x.second * y.first
+        }; };
+        P<M> c = {i, 1}, r = {1, 0};
+        for (int i = 1; i < 2 * M; i <<= 1) {
+            if (((M + 1) / 2) & i) r = mul(r, c);
+            c = mul(c, c);
+        }
+        assert(r.second.v == 0 && (r.first * r.first).v == v);
+        if (r.first.v < M / 2) return r.first;
+        return r.first * -1;
     }
     #endif
 };

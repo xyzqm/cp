@@ -10,35 +10,40 @@ using T = mint;
 struct F : vector<T> {
     inline static T w = mint{3}.exp((M - 1) / (1 << K));
     inline static T i2 = mint{2}.inv();
+    inline static vector<T> p{w}, ip{w.inv()};
+    T root(int e) { if (!p[e].v) p[e] = w.exp(e); return p[e]; }
     // primitives
+    using vector<T>::vector; // inherit all constructors!
     F& resize(size_t sz) { return vector<T>::resize(__bit_ceil(sz)), *this; }
+    F(size_t sz) : vector<T>(__bit_ceil(sz)) {}
     F slice(size_t sz) const {
-        F g; g.resize(sz);
-        for (int i = 0; i < min(size(), g.size()); i++) g[i] = at(i);
-        return g;
+        F f(begin(), begin() + min(sz = __bit_ceil(sz), size()));
+        return f.resize(sz);
     }
-    F(initializer_list<T> l = {}) : vector<T>(l) {}
-    F(int n) : vector<T>(1, n) {}
-    // F(size_t n) : vector<T>(__bit_ceil(n)) {}
     // FFT
     F& fft(bool inv = false) { // inplace fft/ifft
+        while (K >= p.size()) {
+            p.push_back(p.back() * p.back());
+            ip.push_back(ip.back() * ip.back());
+        }
         for (int _ = 0; (1 << _) < size(); _++) {
             int s = inv ? 1 << _ : size() >> 1 >> _; // stride
             assert(s < (1 << K));
-            T dw = w.exp((1 << (K - 1)) / s);
-            if (inv) dw = dw.inv();
-            T W = 1;
-            for (int i = 0; i < size(); i++) if (!(i & s)) {
-                W = (i & (s - 1) ? W * dw : 1);
-                T x = at(i), y = at(i | s);
-                tie(at(i), at(i | s)) = inv ?
-                    make_tuple((x + y * W) * i2, (x - y * W) * i2) :
-                    make_tuple(x + y, (x - y) * W);
+            int e = (1 << (K - 1)) / s;
+            T dw = (inv ? ip : p)[__builtin_ctz(e)];
+            for (int i = 0; i < size(); i += s << 1) {
+                T W = 1;
+                for (int j = 0; j < s; j++) {
+                    T x = at(i | j), y = at(i | j | s);
+                    tie(at(i | j), at(i | j | s)) = inv ?
+                        make_tuple((x + y * W) * i2, (x - y * W) * i2) :
+                        make_tuple(x + y, (x - y) * W);
+                    W = W * dw;
+                }
             }
         }
         return *this;
     }
-    //
     // cout override
     friend ostream& operator<<(ostream& os, F f) {
         for (mint x : f) os << x << " ";
@@ -53,7 +58,7 @@ struct F : vector<T> {
     F& operator+=(int v) { at(0) += v; return *this; }
     F operator+(int v) const { return F(*this) += v; }
     F operator*=(const F &o) {
-        int n = 2 * max(size(), o.size());
+        int n = max(size(), o.size()) << 1;
         resize(n);
         F b = o.slice(n);
         fft(), b.fft();
@@ -70,8 +75,12 @@ struct F : vector<T> {
         if (!at(0).v) throw logic_error("cannot invert polynomial with f(0) == 0");
         F g{at(0).inv()};
         for (int k = 2; k <= size(); k <<= 1) {
-            g *= ((slice(k) * g).resize(k) * -1 + 2);
-            g.resize(k);
+            g.resize(k << 1).fft();
+            F h = slice(k).resize(k << 1).fft();
+            for (int i = 0; i < k << 1; i++) {
+                g[i] *= mint{2} - g[i] * h[i];
+            }
+            g.fft(true).resize(k);
         }
         return g;
     }

@@ -3,7 +3,7 @@
 
 int main() {
     int n; cin >> n;
-    F f; f.resize(n);
+    F f(n);
     for (int i = 0; i < n; i++) cin >> f[i];
     F g = f.inv();
     for (int i = 0; i < n; i++) cout << g[i] << " ";
