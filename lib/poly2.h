@@ -1,5 +1,8 @@
+#pragma GCC optimize("O3,unroll-loops")
+#pragma GCC target("avx2,bmi,bmi2,lzcnt,popcnt")
 #pragma once
 #include <bits/stdc++.h>
+using namespace std;
 #include "mint.h"
 
 const int M = 998244353;
@@ -11,7 +14,6 @@ struct F : vector<T> {
     inline static T w = mint{3}.exp((M - 1) / (1 << K));
     inline static T i2 = mint{2}.inv();
     inline static vector<T> p{w}, ip{w.inv()};
-    T root(int e) { if (!p[e].v) p[e] = w.exp(e); return p[e]; }
     // primitives
     using vector<T>::vector; // inherit all constructors!
     F& resize(size_t sz) { return vector<T>::resize(__bit_ceil(sz)), *this; }
@@ -20,8 +22,8 @@ struct F : vector<T> {
         F f(begin(), begin() + min(sz = __bit_ceil(sz), size()));
         return f.resize(sz);
     }
-    // FFT
-    F& fft(bool inv = false) { // inplace fft/ifft
+    // NTT
+    F& ntt(bool inv = false) { // inplace fft/ifft
         while (K >= p.size()) {
             p.push_back(p.back() * p.back());
             ip.push_back(ip.back() * ip.back());
@@ -57,30 +59,30 @@ struct F : vector<T> {
     F operator+(const F &o) const { return F(*this) += o; }
     F& operator+=(int v) { at(0) += v; return *this; }
     F operator+(int v) const { return F(*this) += v; }
-    F operator*=(const F &o) {
+    F& operator*=(const F &o) {
         int n = max(size(), o.size()) << 1;
         resize(n);
         F b = o.slice(n);
-        fft(), b.fft();
+        ntt(), b.ntt();
         for (int i = 0; i < n; i++) at(i) *= b[i];
-        return fft(true);
+        return ntt(true);
     }
     F& operator*=(int v) { for (T &x : *this) x *= v; return *this; }
     F operator*(int v) const { return F(*this) *= v; }
     F operator*(const F &o) const { return F(*this) *= o; }
-    F operator/=(const F &o) { return *this *= o.inv(); }
+    F& operator/=(const F &o) { return *this *= o.inv(); }
     F operator/(const F &o) const { return F(*this) /= o; }
     // inverse
     F inv() const {
         if (!at(0).v) throw logic_error("cannot invert polynomial with f(0) == 0");
         F g{at(0).inv()};
         for (int k = 2; k <= size(); k <<= 1) {
-            g.resize(k << 1).fft();
-            F h = slice(k).resize(k << 1).fft();
+            g.resize(k << 1).ntt();
+            F h = slice(k).resize(k << 1).ntt();
             for (int i = 0; i < k << 1; i++) {
                 g[i] *= mint{2} - g[i] * h[i];
             }
-            g.fft(true).resize(k);
+            g.ntt(true).resize(k);
         }
         return g;
     }

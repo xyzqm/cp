@@ -8,7 +8,7 @@ int main() {
     F f(n), g(m);
     for (int i = 0; i < n; i++) cin >> f[i];
     for (int i = 0; i < m; i++) cin >> g[i];
-    F h = f * g;
-    for (int i = 0; i < n + m - 1; i++) cout << h[i] << " ";
+    f *= g;
+    for (int i = 0; i < n + m - 1; i++) cout << f[i] << " ";
     cout << endl;
 }

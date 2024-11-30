@@ -1,5 +1,6 @@
 #pragma once
 #include <bits/stdc++.h>
+using namespace std;
 using ll = long long;
 #ifdef SQRT
 template <int M>

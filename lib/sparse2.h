@@ -1,5 +1,6 @@
 // a sparse sparse table!
 #include <bits/stdc++.h>
+using namespace std;
 
 #ifndef LG
 #define LG
