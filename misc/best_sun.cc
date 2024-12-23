@@ -38,7 +38,9 @@ ld k = 0;
 ld ck(int s, ld k) { // s -> start point
     vector<ld> dp(n);
     for (auto [i, j, rt] : lines) {
+        if (!rt) {
 
+        }
     }
 
 }
@@ -65,26 +67,13 @@ void ac() {
             ld alpha = 1e9;
             while (it != o.end() && arg((a[*it] - a[j]) / line) < 0) { // process all points on bottom side
                 ld beta = arg(line / (a[*it] - a[i]));
-                // cout << beta << endl;
                 assert(beta != beta || beta > 0);
                 if (beta == beta && beta < alpha) {
-                    // cout << i << " " << j << " " << *it << " " << beta << endl;
                     mark(i, j, *it);
                     alpha = beta;
                 }
                 it++;
             }
-            // auto r = o.end();
-            // alpha = 1e9;
-            // while (r-- != it) { // process all points on top side
-            //     ld beta = arg((a[*r] - a[i]) / line);
-            //     cout << beta << endl;
-            //     assert(beta >= 0);
-            //     if (beta && beta < alpha) {
-            //         mark(i, j, r - o.begin());
-            //         alpha = beta;
-            //     }
-            // }
         }
     }
     loop(i, n) loop(j, n) if (i != j) {
@@ -92,10 +81,6 @@ void ac() {
         lines.push_back({i, j, 1});
     }
     sort(lines.begin(), lines.end());
-    loop(i, n) loop(j, n) loop(k, n)
-        if (i < j && j < k && valid[i][j][k])
-            cout << i << " " << j << " " << k << endl;
-    cout << "-----\n";
 }
 
 int main() {
