@@ -3,7 +3,7 @@
 using namespace std;
 
 const int N = 1e5 + 1;
-const int B = 300;
+const int B = 400;
 
 // util for log
 constexpr int lg(int x) {
@@ -64,7 +64,6 @@ int tot = 0;
 
 void build(int l, int r) {
     ll.clear();
-    stk.clear();
     for (int x : o) {
         ll.push_back({x, 0});
         a[x] = --ll.end();
