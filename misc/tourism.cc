@@ -92,7 +92,6 @@ void del(int x) {
     }
 }
 void undo() {
-    // assert(stk.size());
     auto [i, x] = stk.back();
     stk.pop_back();
     if (!i) ++(a[x]->c);
