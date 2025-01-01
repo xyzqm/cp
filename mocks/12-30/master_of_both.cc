@@ -26,7 +26,7 @@ M operator*(const M &a, const M &b) {
 
 // sparse segment tree + segtree merging
 const int N = 5e5 + 1;
-const int SGT = 10 * N;
+const int SGT = 40 * N;
 int lc[SGT], rc[SGT], c[SGT], id = 1;
 M v[SGT], iden = {{{0, inf}, {inf, 0}}};
 
@@ -56,7 +56,7 @@ int merge(int p1, int p2) {
     lc[p1] = merge(lc[p1], lc[p2]);
     rc[p1] = merge(rc[p1], rc[p2]);
     if (lc[p1] || rc[p1]) pull(p1);
-    else assert(v[p1] == v[p2]);
+    else assert(v[p1] == v[p2] && c[p1] == c[p2]);
     return p1;
 }
 
@@ -67,6 +67,7 @@ R walk(int rb, int h, int p, M v = iden, int c = 0, int l = 0, int r = N) {
     if (!p) return {v, c, l};
     if (r <= rb) {
         if (dmg(::v[p] * v) < h) return {::v[p] * v, ::c[p] + c, l};
+        if (r - l == 1) return {v, c, r};
     }
     if (m < rb) {
         auto ret = walk(rb, h, rc[p], v, c, m, r);
@@ -83,9 +84,7 @@ vector<int> g[N];
 
 void dfs(int x, int p) {
     fa[x][0] = p, d[x] = d[p] + 1;
-    loop(k, K - 1) {
-        fa[x][k + 1] = fa[fa[x][k]][k];
-    }
+    loop(k, K - 1) fa[x][k + 1] = fa[fa[x][k]][k];
     for (int y : g[x]) if (y != p) dfs(y, x);
 }
 
@@ -109,16 +108,12 @@ void ac(int x, int p) {
         ac(y, x);
         sgt[x] = merge(sgt[x], sgt[y]);
     }
-    for (int i : add[x]) {
-        sgt[x] = edit(i, mat[i], sgt[x]);
-    }
+    for (int i : add[x]) sgt[x] = edit(i, mat[i], sgt[x]);
     for (auto [t, h] : q[x]) {
         auto [mat, c, lb] = walk(t, h, sgt[x]);
         r[t] = c;
     }
-    for (int i : rem[x]) {
-        sgt[x] = edit(i, iden, sgt[x]);
-    }
+    for (int i : rem[x]) sgt[x] = edit(i, iden, sgt[x]);
 }
 
 int32_t main() {
