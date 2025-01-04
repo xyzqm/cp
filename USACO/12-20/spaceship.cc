@@ -30,30 +30,19 @@ Vec operator-(Vec a, Vec b) { return transform(a.begin(), a.end(), b.begin(), a.
 Vec operator*(Vec a, mint v) {
     return transform(a.begin(), a.end(), a.begin(), std::bind(std::multiplies<mint>(), std::placeholders::_1, v)), a;
 }
-using Mat = vector<Vec>;
-Mat operator+(Mat a, Mat b) { return transform(a.begin(), a.end(), b.begin(), a.begin(), plus<Vec>()), a; }
-Mat operator-(Mat a, Mat b) { return transform(a.begin(), a.end(), b.begin(), a.begin(), minus<Vec>()), a; }
-
-ostream& operator<<(ostream &os, Vec v) {
-    for (int x : v) os << x << " ";
-    return os << endl;
-}
-
-ostream& operator<<(ostream &os, Mat m) {
-    for (Vec v : m) {
-        os << v;
-    }
-    return os;
-}
-Mat operator*(Mat a, Mat b) {
-    Mat c(n, Vec(n));
-    loop(i, 0, n) loop(k, 0, n) loop(j, 0, n) seq(c[i][j], +, a[i][k] * b[k][j]);
-    return c;
-}
 Vec operator|(Vec a, Vec b) {
     Vec c(a.size() + b.size());
     copy(a.begin(), a.end(), c.begin());
     copy(b.begin(), b.end(), c.begin() + a.size());
+    return c;
+}
+
+using Mat = vector<Vec>;
+Mat operator+(Mat a, Mat b) { return transform(a.begin(), a.end(), b.begin(), a.begin(), plus<Vec>()), a; }
+Mat operator-(Mat a, Mat b) { return transform(a.begin(), a.end(), b.begin(), a.begin(), minus<Vec>()), a; }
+Mat operator*(Mat a, Mat b) {
+    Mat c(n, Vec(n));
+    loop(i, 0, n) loop(k, 0, n) loop(j, 0, n) seq(c[i][j], +, a[i][k] * b[k][j]);
     return c;
 }
 Mat operator|(Mat a, Mat b) {
