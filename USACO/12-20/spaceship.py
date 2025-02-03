@@ -11,12 +11,6 @@ dp = [np.array(matrix)]
 for _ in range(k):
     dp.append(dp[-1] @ dp[-1] + dp[-1])
 
-for mat in dp:
-    print(mat)
-
-print((dp[0] + np.identity(n)))
-print(inv(dp[0] + np.identity(n)))
-
 for _ in range(q):
     bs, s, bt, t = map(int, input().split())
     s -= 1
