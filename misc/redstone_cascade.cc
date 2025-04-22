@@ -27,13 +27,6 @@ mat operator*(mat a, mat b) {
     return c;
 }
 
-vec operator*(vec a, mat b) {
-    vec c = {0, 0};
-    loop(j, 2) loop(k, 2) c[j] += a[k] * b[k][j];
-    return c;
-}
-
-
 mat mtx[N][K], dp[N];
 int n, fa[N][K], id[N], d[N], cnt = 0;
 vector<bool> in;
