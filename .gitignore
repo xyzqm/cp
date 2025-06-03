@@ -24,3 +24,4 @@ a.out.dSYM/
 manim/media/
 manim/__pycache__/
 scratch.cc
+gen.py
