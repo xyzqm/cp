@@ -22,7 +22,6 @@ int ck(int k) {
     for (int i = 1; i <= n; i++) c[i] = k;
     for (int i = 0; i <= n; i++) {
         int v = req(x, 0);
-        // cout << k << " " << i << " " << v << endl;
         if (v <= 0 && abs(v) % 2 == 0) return i;
         ++c[i + 1];
     }
