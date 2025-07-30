@@ -23,18 +23,12 @@ int main() {
         if (!same[i]) dif = i;
     }
     // use dif bit to check other bits
-    for (int i = 0; i < K; i++) if (i != dif) {
-        if (same[i]) {
-            v[i] = !qry((1 << dif) | (1 << i));
-        }
-        else {
-            v[i] = qry((1 << dif) | (1 << i));
-        }
-    }
+    for (int i = 0; i < K; i++) if (i != dif) v[i] = !qry((1 << dif) | (1 << i));
+
     int a = 0, b = (1 << dif);
     for (int i = 0; i < K; i++) if (i != dif) {
         if (same[i]) a ^= v[i] << i, b ^= v[i] << i;
-        else a ^= v[i] << i, b ^= (v[i] ^ 1) << i;
+        else a ^= (v[i] ^ 1) << i, b ^= v[i] << i;
     }
     cout << "! " << a << " " << b << endl;
 }
