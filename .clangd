@@ -1,2 +1,2 @@
 CompileFlags:
-  Add: [-std=c++17, -I/Users/danielzhu/Documents/cp/lib, -I/usr/local/include]
+  Add: [-std=c++17, -I/Users/danielzhu/Documents/cp/lib, -I/usr/local/include, -I/Users/danielzhu/Documents/cp/include]
