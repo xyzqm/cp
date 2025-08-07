@@ -3,6 +3,20 @@ using namespace std;
 
 #define int int64_t
 
+const int M = 0;
+
+struct mint {
+    int v = 0;
+    mint() {}
+    mint(int v) : v((v % M + M) % M) {}
+	operator int() { return v; }
+    mint inv() {
+        mint x = v, r = 1;
+        for (int p = (M - 2) * 2; p >>= 1; x = x * x) if (p & 1) r = r * x;
+        return r;
+    }
+};
+
 template <typename F>
 struct BIT : vector<int> {
     F op;
