@@ -4,6 +4,7 @@ using namespace std;
 #define int int64_t
 
 const int M = 0;
+const int inf = 1e18; // CHANGE FOR SPECIFIC PROBLEM
 
 struct mint {
     int v = 0;
@@ -57,6 +58,30 @@ vector<int> kmp(T s, T p) {
     }
     return kmp;
 }
+
+struct line {
+    int b = inf, m = inf;
+    int operator()(int x) { return b + m * x; }
+};
+
+struct lct : vector<line> {
+    int n;
+    lct(int n) : vector(4 * n), n(n) {}
+    void upd(line ln, int p = 1, int l = 0, int r = -1) {
+        if (r == -1) r = n;
+        int m = (l + r) >> 1;
+        if (ln(m) < at(p)(m)) ::swap(ln, at(p));
+        if (r - l == 1) return;
+        if (at(p)(l) > ln(l)) upd(ln, 2 * p, l, m);
+        else upd(ln, 2 * p + 1, m, r);
+    }
+    int query(int x, int p = 1, int l = 0, int r = -1) {
+        if (r == -1) r = n;
+        if (r - l == 1) return at(p)(x);
+        int m = (l + r) >> 1;
+        return min(at(p)(x), (x < m ? query(x, 2 * p, l, m) : query(x, 2 * p + 1, m, r)));
+    }
+};
 
 void ac() {
 
