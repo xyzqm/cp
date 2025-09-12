@@ -9,8 +9,10 @@ const int inf = 1e18; // CHANGE FOR SPECIFIC PROBLEM
 struct mint {
     int v = 0;
     mint() {}
-    mint(int v) : v((v % M + M) % M) {}
-	operator int() { return v; }
+    mint(int v) : v(v) {}
+    mint operator*(mint o) { return {v * o.v % M}; }
+    mint operator+(mint o) { return {(v + o.v) % M}; }
+    mint operator-(mint o) { if (int x = v - o.v; x < 0) return x + M; else return x; }
     mint inv() {
         mint x = v, r = 1;
         for (int p = (M - 2) * 2; p >>= 1; x = x * x) if (p & 1) r = r * x;
