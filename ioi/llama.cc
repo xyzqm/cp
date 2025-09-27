@@ -7,6 +7,8 @@ using namespace std;
 #define DBG(X) println(#X": {}", X)
 #endif
 
+#define sz(X) (int)X.size()
+
 const int N = 2e5 + 1;
 const int K = 20;
 
@@ -48,10 +50,10 @@ void initialize(vector<int> T, vector<int> H) {
     DBG(ft);
     DBG(low);
 
-    vector<int> l(H.size()), r(H.size()); // the best you can get from col i is (l[i], r[i]) in row ft[i]
-    for (int i = 0; i < H.size(); i++) ev_ft[ft[i]].push_back(i), ev_low[low[i]].push_back(i);
+    vector<int> l(sz(H)), r(sz(H)); // the best you can get from col i is (l[i], r[i]) in row ft[i]
+    for (int i = 0; i < sz(H); i++) ev_ft[ft[i]].push_back(i), ev_low[low[i]].push_back(i);
     set<int> s;
-    for (int i = -1; i <= (int)H.size(); i++) s.insert(i); // store all blocked indices
+    for (int i = -1; i <= sz(H); i++) s.insert(i); // store all blocked indices
     DBG(s);
     for (auto it = hs.begin(); auto &[k, v] : ev_ft) {
         for (; it != hs.end() && it->first < k; it++) s.erase(it->second);
@@ -63,13 +65,15 @@ void initialize(vector<int> T, vector<int> H) {
         }
     }
 
-    s = {-1, (int)H.size()}; // now store available indices
+    s = {-1, sz(H)}; // now store available indices
     for (auto it = hs.begin(); auto &[k, v] : ev_low) {
         for (; it != hs.end() && it->first < k; it++) s.insert(it->second);
         for (int x : v) {
             nx[x][0] = {*s.upper_bound(l[x]), *s.upper_bound(l[x]), *prev(s.lower_bound(r[x]))};
             if (nx[x][0][1] >= r[x]) nx[x][0] = {x, x, x};
-            assert(ft[nx[x][0][0]] >= ft[x]);
+            int y = nx[x][0][0];
+            assert(ft[y] >= ft[x]);
+            assert(l[y] <= l[x] && r[x] <= r[y]);
         }
     }
 
@@ -98,16 +102,16 @@ bool can_reach(int L, int R, int S, int D) {
 
 #ifndef ONLINE_JUDGE
 int main() {
-    // auto v = ranges::to<vector>(views::iota(1, 2e5 + 1));
-    // initialize(v, v);
- // for (int i = 0; i < 20000; i++) can_reach(i / 2, i, i / 2, i);
-    initialize(
-        {8, 6, 10, 4, 4, 4, 12, 6, 8, 14},
-        {3, 7, 13, 7, 5, 7, 9, 7, 3, 5, 11, 13, 7, 3}
-    );
-    DBG(can_reach(2, 10, 3, 8));
-    DBG(can_reach(2, 10, 5, 8));
-    DBG(can_reach(5, 10, 5, 8));
+    auto v = ranges::to<vector>(views::iota(1, 2e5 + 1));
+    initialize(v, v);
+    for (int i = 0; i < 20000; i++) can_reach(i / 2, i, i / 2, i);
+    // initialize(
+    //     {8, 6, 10, 4, 4, 4, 12, 6, 8, 14},
+    //     {3, 7, 13, 7, 5, 7, 9, 7, 3, 5, 11, 13, 7, 3}
+    // );
+    // DBG(can_reach(2, 10, 3, 8));
+    // DBG(can_reach(2, 10, 5, 8));
+    // DBG(can_reach(5, 10, 5, 8));
     // initialize({2, 1, 3}, {0, 1, 2, 0});
     // DBG(can_reach(0, 3, 1, 3));
     // DBG(can_reach(1, 3, 1, 3));
