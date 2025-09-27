@@ -1,6 +1,12 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+#ifdef ONLINE_JUDGE
+#define DBG(X)
+#else
+#define DBG(X) println("{}", X)
+#endif
+
 #define int int64_t
 
 const int M = 0;

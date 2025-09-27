@@ -1,7 +1,6 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-
 #ifdef ONLINE_JUDGE
 #include "souvenirs.h"
 #else
