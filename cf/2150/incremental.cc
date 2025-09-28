@@ -4,7 +4,7 @@ using namespace std;
 #ifdef ONLINE_JUDGE
 #define DBG(X)
 #else
-#define DBG(X) println(#X": {}", X)
+#define DBG(X) println("{}", X)
 #endif
 
 #define int int64_t
@@ -92,7 +92,21 @@ struct lct : vector<line> {
 };
 
 void ac() {
-
+    int n, m; cin >> n >> m;
+    string s; cin >> s;
+    set<int> sq;
+    for (int _ = 0; _ < m; _++) { int x; cin >> x; sq.insert(x); }
+    s.insert(s.begin(), 'A');
+    int pos = 1;
+    for (int i = 1; i <= n; i++) {
+        if (s[i - 1] == 'B') while (sq.contains(pos)) ++pos;
+        ++pos;
+        if (s[i] == 'B') while (sq.contains(pos)) ++pos;
+        sq.insert(pos);
+    }
+    cout << sq.size() << endl;
+    for (int x : sq) cout << x << " ";
+    cout << endl;
 }
 
 int32_t main() {
