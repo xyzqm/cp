@@ -45,8 +45,6 @@ struct PST : vector<node> {
     }
 };
 
-const int inf = 1e9;
-
 int32_t main() {
     int n; cin >> n;
     vector<array<int, 3>> tws(n);
