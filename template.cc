@@ -91,6 +91,46 @@ struct lct : vector<line> {
     }
 };
 
+using T = array<int, 2>;
+T id = {0, 0};
+struct node { T v = id; array<int, 2> c = {0, 0}; };
+const int mx = 2e12; // hopefully will prevent overflow
+T operator+(T a, T b) { return {min(a[0] + b[0], mx), min(a[1] + b[1], mx)}; }
+
+struct PST : vector<node> {
+    int n;
+    PST(int n) : vector(2), n(n) { reserve(70 * n); }
+    int node(T v, array<int, 2> c = {0, 0}) { return push_back({v, c}), size() - 1; }
+    int upd(int p, int i, T x) {
+        auto u = [&](auto &&u, int p, int l, int r) -> int {
+            auto [_, c] = at(p);
+            if (r - l == 1) return node(x, c);
+            else {
+                int m = (l + r) >> 1;
+                if (i < m) c[0] = u(u, c[0], l, m);
+                else c[1] = u(u, c[1], m, r);
+                return node(at(c[0]).v + at(c[1]).v, c);
+            }
+        };
+        return u(u, p, 0, n);
+    }
+    array<int, 2> walk(int p, int ql, int qr, int tgt, function<int(T)> &&fn) { // finds max r s.t. sum of fn(data[ql...r)) <= tgt, asw as leftover
+        auto w = [&](auto &&w, int p, int l, int r) -> int {
+            auto [v, c] = at(p);
+            if (!p || ql >= r || l >= qr) return ql;
+            else if (int x = fn(v); ql <= l && r <= qr && x <= tgt) return tgt -= x, r;
+            else if (r - l == 1) return ql;
+            else {
+                int m = (l + r) >> 1;
+                int lw = w(w, c[0], l, m);
+                return lw < m ? lw : max(lw, w(w, c[1], m, r));
+            }
+        };
+        return {w(w, p, 0, n), tgt};
+    }
+};
+
+
 void ac() {
 
 }
