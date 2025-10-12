@@ -35,7 +35,6 @@ struct sgt : vector<node> {
     int merge(int a, int b) {
         auto mg = [&](auto &&mg, int x, int y) {
             if (!x || !y) return x + y;
-            // if (at(x).c == array<int, 2>{0, 0} || at(y).c == array<int, 2>{0, 0}) assert((at(x).c == array<int, 2>{0, 0} && at(y).c == array<int, 2>{0, 0}));
             else if (at(x).c == array<int, 2>{0, 0} && at(y).c == array<int, 2>{0, 0}) at(x).d = at(x).d + at(y).d; // merge two leaves
             else {
                 for (int t : {0, 1}) at(x).c[t] = mg(mg, at(x).c[t], at(y).c[t]);
@@ -58,17 +57,14 @@ sgt t(MX);
 vector<int> rt; // sgt roots
 struct dsu : vector<cp> {
     dsu(int n) : vector(n) {}
-    int rep(int x, int w = MX) { return (at(x).v < 0 || at(x).w >= w) ? x : at(x).v = rep(at(x).v); }
+    int rep(int x, int w) { return (at(x).v < 0 || at(x).w >= w) ? x : rep(at(x).v, w); }
     bool join(int x, int y, int w) {
-        // println("{} {}", x, y);
-        x = rep(x), y = rep(y);
-        // println("{} {}", x, y);
+        x = rep(x, MX), y = rep(y, MX);
         if (x == y) return false;
         if (at(x).v > at(y).v) ::swap(x, y);
         at(x).v += at(y).v;
         at(y).v = x, at(y).w = w;
         assert(t.merge(rt[x], rt[y]) == rt[x]);
-        // println("{} {}", x, y);
         at(x).sol.push_back({w, t[rt[x]].d.sm[0]});
         return true;
     }
@@ -88,7 +84,6 @@ int32_t main() {
         es.push_back({max(p[u], p[v]), u, v});
         sm[u] += w, sm[v] += w, tot += w;
     }
-    // println("{} {}", sm, tot);
 
     for (int x : sm) rt.push_back(t.create(x));
     sort(all(es));
@@ -98,9 +93,7 @@ int32_t main() {
     for (int prv = 0; q --> 0; prv = abs(prv)) {
         int x, k; cin >> x >> k;
         if (typ) x ^= prv, k ^= prv;
-        // println("{} {}", x, k);
         int rep = uf.rep(x, k);
-        // println("{} {}", rep, uf[rep].sol);
         cout << (prv = (--lower_bound(all(uf[rep].sol), pair<int, int>{k, -1}))->second - tot) << endl;
     }
 }
