@@ -36,7 +36,7 @@ struct sgt : vector<node> {
         if (!x || !y) return x + y;
         else if (at(x).c == array<int, 2>{0, 0} && at(y).c == array<int, 2>{0, 0}) at(x).d = at(x).d + at(y).d; // merge two leaves
         else {
-            for (int t : {0, 1}) at(x).c[t] = mg(mg, at(x).c[t], at(y).c[t]);
+            for (int t : {0, 1}) at(x).c[t] = merge(at(x).c[t], at(y).c[t]);
             at(x).d = at(at(x).c[0]).d + at(at(x).c[1]).d;
         }
         return x;
