@@ -16,8 +16,8 @@ struct mint {
     int v = 0;
     mint() {}
     mint(int v) : v(v) {}
-    mint operator*(mint o) { return {v * o.v % M}; }
-    mint operator+(mint o) { return {(v + o.v) % M}; }
+    mint operator*(mint o) { return v * o.v % M; }
+    mint operator+(mint o) { return (v + o.v) % M; }
     void operator+=(mint o) { v = (v + o.v) % M; }
     mint operator-(mint o) { if (int x = v - o.v; x < 0) return x + M; else return x; }
     mint inv() {
