@@ -54,7 +54,6 @@ int32_t main() {
     auto check = [&]() {
         int t1 = t.walk(init, [&](node x) { return k + x.mn >= 1; }); // first time going under 1
         int t2 = t.walk(init, [&](node x) { return k + x.mx < n; }); // first time hitting n
-        // we require t1 <= t2
         int t3 = t.walk(init, [&](node x) { return k + x.mn > 1; }); // first time hitting 1
         int t4 = t.walk(init, [&](node x) { return k + x.mx <= n; }); // first time going over n
         if (t1 <= t2 && t3 >= t4) {
