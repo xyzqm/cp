@@ -43,12 +43,10 @@ int32_t main() {
         int u, v; cin >> u >> v;
         if (dep[u] < dep[v]) swap(u, v);
         int u_ = dp[u], v_ = dp[v];
-        // println("{} {} {} {}", u, v, u_, v_);
         for (int k = K; k --> 0; ) if ((dep[u] - dep[v]) >> k & 1) {
             u_ += jmp[u][k][1];
             u = jmp[u][k][0];
         }
-        // println("{} {} {} {}", u, v, u_, v_);
         if (u == v) cout << u_ + rt[u] << endl;
         else {
             for (int k = K; k --> 0; ) if (jmp[u][k][0] != jmp[v][k][0]) {
@@ -59,7 +57,6 @@ int32_t main() {
             }
             int fa = jmp[u][0][0];
             assert(fa == jmp[v][0][0]);
-            // println("{} {} {}", fa, rt[fa], dp[fa] - val[u] - val[v]);
             cout << dp[fa] - val[u] - val[v] + u_ + v_ - ww[u] - ww[v] + rt[fa] << endl;
         }
     }
