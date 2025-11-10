@@ -10,9 +10,6 @@ void ad(int &a, int b) { a = (a + b) % MOD; }
 template <int N, int M>
 struct mat : array<array<int, M>, N> {};
 
-template <int N>
-using vec = mat<1, N>;
-
 template <int A, int B, int C>
 mat<A, C> operator*(mat<A, B> a, mat<B, C> b) {
     mat<A, C> c{};
@@ -41,7 +38,7 @@ const int N = 101;
 void ac() {
     int n, dep;
     cin >> n >> dep;
-    vec<N> p{};
+    mat<1, N> p{};
     auto tr = id<N, 1>(); // offset by 1
     int cur = -1;
     while (n--) {
