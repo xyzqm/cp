@@ -1,30 +1,11 @@
-// https://qoj.ac/problem/4054
+// https://qoj.ac/submission/1878162
 #include <bits/stdc++.h>
 using namespace std;
 
 #define int int64_t
 const int inf = 1e14;
 
-#ifdef ONLINE_JUDGE
-#define DBG(X)
-#else
-#define DBG(X) println(#X": {}", X)
-#endif
-
-/**
-dp[u][v] = min cost to move hole to u and move v to hole
-    - does NOT include the contribution of either the hole or node v
-
-need to precompute several quantities:
-from_l[x][0/1]: min cost to put hole/u into left subtree and get x out, deleting only left
-    - min(cost[u][_] + dp[_][x])
-    - does not include cost of x
-from_r[y][0/1]: min cost to put hole/u into left subtree, get node y out of right subtree
-    - min(from_l[x] + cost[x][_] + dp[_][y]) where _, y are in right subtree
-    - x/_ dim can be precomputed separately
-
-answer is min(dp[x][y] + cost[u][x] + cost[y][u])
-*/
+#define smin(a, b) a = min(a, (b))
 
 int32_t main() {
     cin.tie(0)->sync_with_stdio(0);
@@ -49,7 +30,6 @@ int32_t main() {
         };
         calc(i, 0);
     }
-    DBG(cost);
 
     // calculate pairs with a given LCA
     vector<vector<int>> sub(n + 1);
@@ -67,15 +47,10 @@ int32_t main() {
         }
     };
     dfs(1);
-    DBG(on);
-
-    // the actual dp
-    auto smin = [](int &a, int b) { a = min(a, b); };
 
     // dp arrays for precomp
     auto dp = vector(n + 1, vector<int>(n + 1, inf));
-    vector<array<int, 2>> from_l(n + 1);
-    vector<int> into_r(n + 1), swap_r(n + 1), to_r(n + 1);
+    vector<int> from_l(n + 1), into_r(n + 1), swap_r(n + 1), to_r(n + 1);
 
     auto ac = [&](this auto ac, int u) -> void {
         for (int v : ch[u]) ac(v);
@@ -92,23 +67,22 @@ int32_t main() {
             // assume left always deleted before right
             int lc = ch[u][0], rc = ch[u][1];
             for (int x : sub[lc]) {
-                from_l[x] = {inf, inf};
-                into_r[x] = inf;
+                from_l[x] = into_r[x] = inf;
             }
             for (int y : sub[rc]) {
                 to_r[y] = swap_r[y] = inf;
             }
-            // take x out of L
-            for (auto [_, x] : on[lc]) for (int t : {0, 1}) {
-                smin(from_l[x][t], t * cost[u][_] + dp[_][x]);
+            // move u into L and take x out
+            for (auto &[_, x] : on[lc]) {
+                smin(from_l[x], cost[u][_] + dp[_][x]);
             }
             // take _ out of L and put it in y
             for (int x : sub[lc]) for (int y : sub[rc]) {
-                smin(to_r[y], from_l[x][1] + cost[x][y]);
+                smin(to_r[y], from_l[x] + cost[x][y]);
             }
 
             // min cost to move hole from u to y
-            for (auto [y, _] : on[rc]) {
+            for (auto &[y, _] : on[rc]) {
                 smin(swap_r[y], dp[y][_] + cost[_][u]);
             }
 
@@ -118,17 +92,17 @@ int32_t main() {
             }
 
             // case 1: hole---u deleted first
-            for (auto [x, _] : on[lc]) {
+            for (auto &[x, _] : on[lc]) {
                 smin(dp[x][u], dp[x][_] + into_r[_]);
             }
 
             // case 2: hole---u deleted second
             for (int x : sub[lc]) for (int y : sub[rc]) {
-                smin(dp[y][x], from_l[x][1] + swap_r[y]);
+                smin(dp[y][x], from_l[x] + swap_r[y]);
             }
 
             // case 3: hole---u deleted last
-            for (auto [_, y] : on[rc]) {
+            for (auto &[_, y] : on[rc]) {
                 smin(dp[u][y], to_r[_] + dp[_][y]);
             }
 
@@ -136,8 +110,7 @@ int32_t main() {
         }
     };
     ac(1);
-    DBG(dp);
     int ans = inf;
-    for (auto [x, y] : on[1]) smin(ans, dp[x][y] + cost[1][x] + cost[y][1]);
+    for (int u : sub[1]) smin(ans, dp[u][1] + cost[1][u]);
     cout << ans << endl;
 }
