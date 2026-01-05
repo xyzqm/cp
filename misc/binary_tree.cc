@@ -66,12 +66,9 @@ int32_t main() {
         else for (int _ : {0, 1}) {
             // assume left always deleted before right
             int lc = ch[u][0], rc = ch[u][1];
-            for (int x : sub[lc]) {
-                from_l[x] = into_r[x] = inf;
-            }
-            for (int y : sub[rc]) {
-                to_r[y] = swap_r[y] = inf;
-            }
+            for (int x : sub[lc]) from_l[x] = into_r[x] = inf;
+            for (int y : sub[rc]) to_r[y] = swap_r[y] = inf;
+
             // move u into L and take x out
             for (auto &[_, x] : on[lc]) {
                 smin(from_l[x], cost[u][_] + dp[_][x]);
@@ -80,33 +77,23 @@ int32_t main() {
             for (int x : sub[lc]) for (int y : sub[rc]) {
                 smin(to_r[y], from_l[x] + cost[x][y]);
             }
-
             // min cost to move hole from u to y
             for (auto &[y, _] : on[rc]) {
                 smin(swap_r[y], dp[y][_] + cost[_][u]);
             }
-
             // put x into R
             for (int x : sub[lc]) for (int _ : sub[rc]) {
                 smin(into_r[x], cost[x][_] + swap_r[_]);
             }
 
             // case 1: hole---u deleted first
-            for (auto &[x, _] : on[lc]) {
-                smin(dp[x][u], dp[x][_] + into_r[_]);
-            }
-
+            for (auto &[x, _] : on[lc]) smin(dp[x][u], dp[x][_] + into_r[_]);
             // case 2: hole---u deleted second
-            for (int x : sub[lc]) for (int y : sub[rc]) {
-                smin(dp[y][x], from_l[x] + swap_r[y]);
-            }
-
+            for (int x : sub[lc]) for (int y : sub[rc]) smin(dp[y][x], from_l[x] + swap_r[y]);
             // case 3: hole---u deleted last
-            for (auto &[_, y] : on[rc]) {
-                smin(dp[u][y], to_r[_] + dp[_][y]);
-            }
+            for (auto &[_, y] : on[rc]) smin(dp[u][y], to_r[_] + dp[_][y]);
 
-            ranges::reverse(ch[u]);
+            swap(ch[u][0], ch[u][1]);
         }
     };
     ac(1);
