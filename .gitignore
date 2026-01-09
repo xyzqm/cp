@@ -1,4 +1,3 @@
-Unfinished/
 .vscode/
 a.out
 stress_test.cpp
@@ -17,11 +16,8 @@ test*
 **/*.in
 **/.DS_Store
 *.out
-a.cc
-b.cc
 gen.cc
 a.out.dSYM/
 manim/media/
 manim/__pycache__/
 scratch.cc
-gen.py
