@@ -57,14 +57,4 @@ int32_t main() {
         }
     }
     cout << dp[n][n] << endl;
-    // for (int j = 0; j <= n; j++) {
-    //     if (j) for (int i = 1; i <= n; i++) {
-    //     }
-    //     for (int i = 1; i <= n; i++) {
-    //         sm[i][j].push_back(0);
-    //         for (auto &[_, k] : opts[0][i]) {
-    //             sm[i][j].push_back((sm[i][j].back() + dp[j][k]) % M);
-    //         }
-    //     }
-    // }
 }
