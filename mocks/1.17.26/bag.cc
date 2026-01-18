@@ -30,11 +30,14 @@ int32_t main() {
         for (int i = 1; i <= n / lb; i++) { // i = # of items with weight >= B
             dp[0].swap(dp[1]);
             dp[1].assign(n + 1, 0);
-            for (int j = lb * i; j <= n; j++) {
-                ad(dp[1][j], dp[1][j - i]); // increment all items by 1
-                ad(dp[1][j], dp[0][j - lb]); // add item with weight lb
-                if (j >= r + i) sb(dp[1][j], dp[0][j - r - i]);
+            for (int j = (i - 1) * lb; j <= n; j++) {
                 ad(ws[j], dp[1][j]);
+                if (j + i <= n) {
+                    int ws = dp[1][j];
+                    if (j >= r) sb(ws, dp[0][j - r]); // subtract off invalid configurations
+                    ad(dp[1][j + i], ws);
+                }
+                if (j + lb <= n) ad(dp[1][j + lb], dp[0][j]);
             }
         }
     }
