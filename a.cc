@@ -1,95 +1,126 @@
 #include <bits/stdc++.h>
+
+#define forn(i, n) for (int i = 0; i < int(n); i++)
+
 using namespace std;
 
-#ifdef ONLINE_JUDGE
-#define DBG(X)
-#else
-#define DBG(X) println(#X": {}", X)
-#endif
+const int MOD = 998244353;
 
-#define int int64_t
-
-const int M = 1e9 + 7;
-
-void ad(int &a, const int b) { a = (a + b) % M; }
-void mul(int &a, const int b) { a = a * b % M; }
-
-int inv(int x) {
-    int r = 1;
-    for (int pw = M - 2; pw; pw >>= 1, x = x * x % M) if (pw & 1) mul(r, x);
-    return r;
+int add(int a, int b){
+    a += b;
+    if (a >= MOD) a -= MOD;
+    if (a < 0) a += MOD;
+    return a;
 }
 
-void ac() {
-    int n, k; cin >> n >> k;
-    vector fact(n + 1, 1);
-    for (int i = 2; i <= n; i++) fact[i] = fact[i - 1] * i % M;
-    vector<array<int, 2>> e(n - 1);
-    for (auto &[u, v] : e) cin >> u >> v;
-
-    vector<bool> in(n);
-    while (k--) {
-        int e; cin >> e;
-        in[e] = true;
-    }
-
-    vector<vector<array<int, 2>>> g(n + 1);
-    for (int i = 0; i < n - 1; i++) {
-        auto [u, v] = e[i];
-        g[u].push_back({v, in[i + 1]});
-        g[v].push_back({u, in[i + 1]});
-    }
-    DBG(g);
-    vector<array<int, 3>> dp(n + 1);
-    vector<int> deg(n + 1);
-
-    auto dfs = [&](this auto dfs, int u, int p) -> void {
-        int p01 = 1;
-        for (auto [v, f] : g[u]) if (v != p) {
-            ++deg[u];
-            dfs(v, u);
-            dp[v][2] = (dp[v][2] * deg[v] % M + dp[v][1] * (deg[v] - 1) % M) % M;
-            if (f) ad(dp[v][1], dp[v][0]), dp[v][0] = 0;
-            mul(p01, dp[v][0] + dp[v][1]);
-        }
-        if (!deg[u]) dp[u] = {1, 0, 0};
-        else for (auto [v, _] : g[u]) if (v != p) {
-            // 0/1/2 case
-            for (int t : {0, 1, 2}) {
-                ad(dp[u][t],
-                    p01 * inv(dp[v][0] + dp[v][1]) % M
-                    * dp[v][t] % M * fact[deg[u] - 1] % M
-                );
-            }
-        }
-        if (u == 1) { // need to ensure we don't overcount
-            // count number of ways for string to start and end in 0
-            int cur = 0, tot = 0;
-            for (auto [v, _] : g[u]) if (v != p) {
-                int nw = dp[v][0] * inv(dp[v][0] + dp[v][1]) % M;
-                ad(tot, cur * nw % M);
-                ad(cur, nw);
-            }
-            if (deg[u] == 1) tot = cur;
-            mul(tot, p01);
-            DBG(tot);
-            if (deg[u] > 1) mul(tot, 2 * fact[deg[u] - 2]);
-            mul(p01, fact[deg[u]]);
-            DBG(p01);
-            int rem = (p01 - tot + M) % M;
-            if (deg[u] > 1) mul(rem, (M + 1) / 2);
-            dp[u][1] = rem;
-        }
-        DBG(u);
-        DBG(dp[u]);
-    };
-    dfs(1, 0);
-    DBG(dp);
-    cout << (dp[1][1] + dp[1][2]) % M << endl;
+int mul(int a, int b){
+    return a * 1ll * b % MOD;
 }
 
-int32_t main() {
-    cin.tie(0)->sync_with_stdio(0);
-    int c, t; cin >> c >> t;
-    while (t--) ac();
+int binpow(int a, int b){
+    int res = 1;
+    while (b){
+        if (b & 1)
+            res = mul(res, a);
+        a = mul(a, a);
+        b >>= 1;
+    }
+    return res;
+}
+
+int n, k;
+vector<vector<int>> g;
+
+struct dpar{
+    vector<int> dp;
+    int ml, ad;
+    dpar(){
+        ml = 1, ad = 0;
+        dp.clear();
+    }
+    int& operator [](int k){
+        return dp[max(0, int(dp.size()) - k - 1)];
+    }
+    int get(int k){
+        int x = dp[max(0, int(dp.size()) - k - 1)];
+        return add(mul(x, ml), ad);
+    }
+};
+
+vector<dpar> dp;
+vector<int> fact;
+
+void dfs(int v){
+    int bst = -1;
+    vector<int> val;
+    for (int u : g[v]){
+        dfs(u);
+        dp[u].dp.push_back(add(0, mul(binpow(dp[u].ml, MOD - 2), -dp[u].ad)));
+        if (bst == -1 || dp[u].dp.size() > dp[bst].dp.size())
+            bst = u;
+        val.push_back(dp[u].get(k - 1));
+    }
+    if (val.empty()){
+        dp[v].dp.push_back(1);
+        return;
+    }
+
+    vector<int> pr(val.size() + 1, 1), su(val.size() + 1, 1);
+    forn(i, val.size()){
+        pr[i + 1] = mul(pr[i], val[i]);
+        su[val.size() - i - 1] = mul(su[val.size() - i], val[val.size() - i - 1]);
+    }
+
+    swap(dp[v], dp[bst]);
+    {
+        int i = find(g[v].begin(), g[v].end(), bst) - g[v].begin();
+        int cur = mul(fact[g[v].size() - 1], mul(pr[i], su[i + 1]));
+        if (cur == 0){
+            int mx = 1;
+            for (int u : g[v]) mx = max(mx, int(dp[u].dp.size()));
+            dp[v].dp.assign(mx, 0);
+            dp[v].ml = 1, dp[v].ad = 0;
+        }
+        else{
+            dp[v].ml = mul(dp[v].ml, cur);
+            dp[v].ad = mul(dp[v].ad, cur);
+        }
+    }
+
+    int rev = binpow(dp[v].ml, MOD - 2);
+    forn(i, g[v].size()){
+        int u = g[v][i];
+        if (u == bst) continue;
+        int cur = mul(fact[g[v].size() - 1], mul(pr[i], su[i + 1]));
+        int tot = mul(cur, dp[u].get(n));
+        dp[v].ad = add(dp[v].ad, tot);
+        forn(j, dp[u].dp.size()){
+            dp[v][j] = add(dp[v][j], -mul(rev, tot));
+            dp[v][j] = add(dp[v][j], mul(mul(cur, dp[u].get(j)), rev));
+        }
+    }
+}
+
+int main() {
+    cin.tie(0);
+    ios::sync_with_stdio(false);
+    int t;
+    cin >> t;
+    while (t--){
+        cin >> n >> k;
+        g.assign(n, {});
+        for (int i = 1; i < n; ++i){
+            int p;
+            cin >> p;
+            --p;
+            g[p].push_back(i);
+        }
+        dp.assign(n, {});
+        fact.resize(n + 1, 1);
+        for (int i = 1; i <= n; ++i)
+            fact[i] = mul(fact[i - 1], i);
+        dfs(0);
+        cout << dp[0].get(n) << '\n';
+    }
+    return 0;
 }
