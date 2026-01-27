@@ -33,12 +33,12 @@ void ac() {
         vector<array<int, 2>> pref(dgs), suf(dgs, {dgs - 1, dgs - 1});
         for (int i = 0; i < dgs; i++) for (int t: {0, 1}) {
             if (i > 0) pref[i][t] = pref[i - 1][t ^ 1];
-            if (!eq(cons[i], t)) pref[i][t] = dgs;
+            if (!eq(cons[i], t)) pref[i][t] = i + 1;
             // pref[i][t] = pref[i][t] && eq(cons[i], t);
         }
         for (int i = dgs; i --> 0; ) for (int t: {0, 1}) {
             if (i + 1 < dgs) suf[i][t] = suf[i + 1][t ^ 1];
-            if (!eq(cons[i], t)) suf[i][t] = -1;
+            if (!eq(cons[i], t)) suf[i][t] = i - 1;
         }
         DBG(pref);
         DBG(suf);
@@ -48,14 +48,30 @@ void ac() {
             if (pref[i][1] == 0 && suf[i + 1][1] == dgs - 1) ans++;
         }
         // case 2: two pairs of adjacent +
-        if (dgs > 3) for (int i = 1; i < r; i++) for (int j = i; j + 1 < dgs; j++)
-        if (j - i >= r - 2 && (j - i) % 2 == 0) {
-            if (pref[j][1] <= i && pref[i - 1][1] == 0 && suf[j + 1][1] == dgs - 1) ans++;
+        vector<int> valid(r);
+        for (int i = 1; i < r; i++) {
+            if (i > 1) valid[i] = valid[i - 2];
+            valid[i] += pref[i - 1][1] == 0;
         }
+        if (dgs > 3) for (int i = r - 1; i + 1 < dgs; i++) if (suf[i + 1][1] == dgs - 1) {
+            int mx = i - (r - 2);
+            if ((i - mx) % 2) --mx;
+            int mn = pref[i][1];
+            // println("{} {} {}", i, mx, mn);
+            if (mn > mx || mx < 1) continue;
+            if ((mx - mn) % 2) ++mn;
+            ans += valid[mx];
+            if (mn >= 2) ans -= valid[mn - 2];
+        }
+        // if (dgs > 3) for (int i = 1; i < r; i++) for (int j = i; j + 1 < dgs; j++)
+        // if (j - i >= r - 2 && (j - i) % 2 == 0) {
+        //     if (pref[j][1] <= i && pref[i - 1][1] == 0 && suf[j + 1][1] == dgs - 1) ans++;
+        // }
         DBG(ans);
         // case 3: all same or alternating
         if (ad) {
-            if (r <= 2 && c <= 2) ans++; // can be all same
+            for (int &x : cons) if (x == -1) x = 1;
+            if (r == 2 && c == 2 && accumulate(cons.begin(), cons.end(), 0) == dgs) ans++; // can be all same
             for (int t : {0, 1}) if (pref.back()[t] == 0) ans++;
         }
         return ans;
