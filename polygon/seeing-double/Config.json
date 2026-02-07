@@ -25,7 +25,13 @@
     {
       "name": "to",
       "source": "./solutions/to.cpp",
-      "tag": "TO",
+      "tag": "TL",
+      "sourceType": "cpp.g++17"
+    },
+    {
+      "name": "to2",
+      "source": "./solutions/to2.cpp",
+      "tag": "TL",
       "sourceType": "cpp.g++17"
     }
   ],
@@ -33,6 +39,10 @@
     {
       "name": "gen",
       "source": "./generators/gen.cpp"
+    },
+    {
+      "name": "gen_max",
+      "source": "./generators/gen_max.cpp"
     }
   ],
   "checker": {
@@ -68,7 +78,7 @@
             "generator": "gen",
             "range": [
               500,
-              510
+              505
             ]
           },
           {
@@ -76,7 +86,15 @@
             "generator": "gen",
             "range": [
               100000,
-              100020
+              100010
+            ]
+          },
+          {
+            "type": "generator",
+            "generator": "gen_max",
+            "range": [
+              50000,
+              50005
             ]
           }
         ]
