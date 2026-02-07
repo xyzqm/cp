@@ -12,7 +12,6 @@ a
 b
 b.out
 gen
-test*
 **/*.in
 **/.DS_Store
 *.out
@@ -21,3 +20,8 @@ a.out.dSYM/
 manim/media/
 manim/__pycache__/
 scratch.cc
+
+# polyman
+testlib.h
+**/testsets/tests
+**/solutions-outputs
