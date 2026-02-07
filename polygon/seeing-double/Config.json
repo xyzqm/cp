@@ -1,0 +1,87 @@
+{
+  "name": "seeing-double",
+  "timeLimit": 2000,
+  "memoryLimit": 256,
+  "inputFile": "stdin",
+  "outputFile": "stdout",
+  "interactive": false,
+  "statements": {
+    "english": {
+      "encoding": "UTF-8",
+      "name": "Seeing Double (Hard)",
+      "legend": "./statements/english/legend.tex",
+      "input": "./statements/english/input-format.tex",
+      "output": "./statements/english/output-format.tex",
+      "notes": "./statements/english/notes.tex"
+    }
+  },
+  "solutions": [
+    {
+      "name": "main",
+      "source": "./solutions/acc.cpp",
+      "tag": "MA",
+      "sourceType": "cpp.clang++20"
+    },
+    {
+      "name": "to",
+      "source": "./solutions/to.cpp",
+      "tag": "TO",
+      "sourceType": "cpp.clang++20"
+    }
+  ],
+  "generators": [
+    {
+      "name": "gen",
+      "source": "./generators/gen.cpp"
+    }
+  ],
+  "checker": {
+    "name": "wcmp",
+    "source": "wcmp.cpp",
+    "isStandard": true
+  },
+  "validator": {
+    "name": "validator",
+    "source": "./validator/val.cpp",
+    "testsFilePath": "./validator/validator_tests.json"
+  },
+  "testsets": [
+    {
+      "name": "tests",
+      "generatorScript": {
+        "commands": [
+          {
+            "useInStatements": true,
+            "type": "manual",
+            "manualFile": "./manual/tests/sample1.txt"
+          },
+          {
+            "type": "generator",
+            "generator": "gen",
+            "range": [
+              50,
+              60
+            ]
+          },
+          {
+            "type": "generator",
+            "generator": "gen",
+            "range": [
+              500,
+              510
+            ]
+          },
+          {
+            "type": "generator",
+            "generator": "gen",
+            "range": [
+              100000,
+              100020
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "problemId": 508405
+}

@@ -1,0 +1,8 @@
+{
+  "tests": [
+    {
+      "input": "1\nabab\n",
+      "expectedVerdict": "VALID"
+    }
+  ]
+}
