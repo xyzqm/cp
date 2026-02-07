@@ -13,6 +13,7 @@ using namespace std;
 int ac() {
     // int n; cin >> n;
     string s; cin >> s;
+    // auto pos = vector(26, vector<int>());
     vector<vector<int>> pos(26);
     for (int i = 0; i < s.size(); i++) pos[s[i] - 'a'].push_back(i);
     vector<array<int, 2>> ps;

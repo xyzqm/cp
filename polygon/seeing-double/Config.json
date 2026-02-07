@@ -20,13 +20,13 @@
       "name": "main",
       "source": "./solutions/acc.cpp",
       "tag": "MA",
-      "sourceType": "cpp.clang++20"
+      "sourceType": "cpp.g++17"
     },
     {
       "name": "to",
       "source": "./solutions/to.cpp",
       "tag": "TO",
-      "sourceType": "cpp.clang++20"
+      "sourceType": "cpp.g++17"
     }
   ],
   "generators": [
@@ -41,7 +41,7 @@
     "isStandard": true
   },
   "validator": {
-    "name": "validator",
+    "name": "val",
     "source": "./validator/val.cpp",
     "testsFilePath": "./validator/validator_tests.json"
   },
