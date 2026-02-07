@@ -18,7 +18,7 @@ int ac() {
     for (int i = 0; i < s.size(); i++) pos[s[i] - 'a'].push_back(i);
     vector<array<int, 2>> ps;
     for (auto &v : pos) {
-        if (v.size() % 2) return -1;
+        assert(!(v.size() % 2));
         for (int i = 0; i < v.size() / 2; i++) ps.push_back({v[i], v[i + v.size() / 2]});
     }
     DBG(ps);

@@ -28,8 +28,8 @@ int ac() {
     vector<int> frq(26);
     for (char c : s) ++frq[c - 'a'];
     for (int &x : frq) {
-        if (x % 2) return -1;
-        else x >>= 1;
+        assert(!(x % 2));
+        x >>= 1;
     }
     vector<int> mp(s.size());
     vector<queue<int>> pos(26);
