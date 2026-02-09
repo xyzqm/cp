@@ -11,13 +11,13 @@ using namespace std;
 
 const int M = 998244353;
 
-int xp(int v, int pw, int M = ::M) {
+int xp(int v, int pw) {
     int r = 1;
     for (; pw; v = v * v % M, pw >>= 1) if (pw & 1) r = r * v % M;
     return r;
 }
 
-int sub(int x, int M = ::M) { return x < 0 ? x + M : x; }
+int sub(int x) { return x < 0 ? x + M : x; }
 
 int32_t main() {
     cin.tie(0)->sync_with_stdio(0);
@@ -38,31 +38,20 @@ int32_t main() {
         res %= M;
     }
     DBG(res);
-    vector<int> pref(n + 1);
-    vector<array<int, 2>> hsh(n + 1);
-    array<int, 2> ms = {M, (1LL << 31) - 1};
+    vector<int> pref(n + 1), hsh(n + 1);
     for (int i = 1, p2 = 1; i <= n; i++, p2 = (p2 << 1) % M) {
         char c; cin >> c;
         pref[i] = pref[i - 1] + (c == '1');
-        for (int t : {0, 1}) {
-            hsh[i][t] = (hsh[i - 1][t] + (c == '1') * p2) % ms[t];
-        }
+        hsh[i] = (hsh[i - 1] + (c == '1') * p2) % M;
     }
     auto hash = [&](int l, int r) {
-        array<int, 2> res;
-        for (int t : {0, 1}) {
-            res[t] = sub(hsh[r][t] - hsh[l][t], ms[t]) * xp(2, ms[t] - 1 - l, ms[t]) % ms[t];
-        }
-        return res;
-        // return sub(hsh[r] - hsh[l]) * xp(i2, l) % M;
+        return sub(hsh[r] - hsh[l]) * xp(2, M - 1 - l) % M;
     };
     DBG(pref);
     while (q--) {
         int a, b, c, d; cin >> a >> b >> c >> d;
         int o = pref[b] - pref[--a] - (pref[d] - pref[--c]);
         int z = (d - c) - (b - a) + o;
-        // assert(b - a == d - c);
-        // assert(!o && !z);
         DBG(o);
         DBG(z);
         if (o < 0) o = -o, z = -z;
