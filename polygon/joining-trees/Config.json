@@ -1,0 +1,108 @@
+{
+  "name": "joining-trees",
+  "description": "Joining trees.",
+  "timeLimit": 2000,
+  "memoryLimit": 256,
+  "inputFile": "stdin",
+  "outputFile": "stdout",
+  "interactive": false,
+  "tags": [
+    "trees",
+    "constructive"
+  ],
+  "statements": {
+    "english": {
+      "encoding": "UTF-8",
+      "name": "Joining Trees",
+      "legend": "./statements/english/legend.tex",
+      "input": "./statements/english/input-format.tex",
+      "output": "./statements/english/output-format.tex",
+      "notes": "./statements/english/notes.tex"
+    }
+  },
+  "solutions": [
+    {
+      "name": "main",
+      "source": "./solutions/acc.cpp",
+      "tag": "MA",
+      "sourceType": "cpp.gcc14-64-msys2-g++23"
+    }
+  ],
+  "generators": [
+    {
+      "name": "gen",
+      "source": "./generators/gen.cpp"
+    }
+  ],
+  "checker": {
+    "name": "wcmp",
+    "source": "wcmp.cpp",
+    "isStandard": true
+  },
+  "validator": {
+    "name": "validator",
+    "source": "./validator/val.cpp",
+    "testsFilePath": "./validator/validator_tests.json"
+  },
+  "testsets": [
+    {
+      "name": "tests",
+      "generatorScript": {
+        "commands": [
+          {
+            "useInStatements": true,
+            "type": "manual",
+            "manualFile": "./manual/tests/sample1.txt",
+            "group": "samples"
+          },
+          {
+            "type": "generator",
+            "generator": "gen",
+            "range": [
+              2,
+              10
+            ],
+            "group": "main"
+          },
+          {
+            "type": "generator",
+            "generator": "gen",
+            "range": [
+              1000,
+              1010
+            ],
+            "group": "main"
+          },
+          {
+            "type": "generator",
+            "generator": "gen",
+            "range": [
+              100000,
+              100005
+            ],
+            "group": "main"
+          },
+          {
+            "type": "generator",
+            "generator": "gen",
+            "range": [
+              499990,
+              500000
+            ],
+            "group": "main"
+          }
+        ]
+      },
+      "groupsEnabled": true,
+      "groups": [
+        {
+          "name": "samples"
+        },
+        {
+          "name": "main"
+        }
+      ]
+    }
+  ],
+  "problemId": 509149
+}
