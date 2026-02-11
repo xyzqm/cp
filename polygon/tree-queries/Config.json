@@ -1,0 +1,99 @@
+{
+  "name": "tree-queries",
+  "timeLimit": 2000,
+  "memoryLimit": 512,
+  "inputFile": "stdin",
+  "outputFile": "stdout",
+  "interactive": false,
+  "statements": {
+    "english": {
+      "encoding": "UTF-8",
+      "name": "Tree Queries",
+      "legend": "./statements/english/legend.tex",
+      "input": "./statements/english/input-format.tex",
+      "output": "./statements/english/output-format.tex",
+      "notes": "./statements/english/notes.tex"
+    }
+  },
+  "solutions": [
+    {
+      "name": "main",
+      "source": "./solutions/acc.cpp",
+      "tag": "MA",
+      "sourceType": "cpp.gcc14-64-msys2-g++23"
+    },
+    {
+      "name": "tle",
+      "source": "./solutions/tle.cpp",
+      "tag": "TL",
+      "sourceType": "cpp.gcc14-64-msys2-g++23"
+    }
+  ],
+  "generators": [
+    {
+      "name": "gen",
+      "source": "./generators/gen.cpp"
+    },
+    {
+      "name": "gen_max",
+      "source": "./generators/gen_max.cpp"
+    }
+  ],
+  "checker": {
+    "name": "wcmp",
+    "source": "wcmp.cpp",
+    "isStandard": true
+  },
+  "validator": {
+    "name": "val",
+    "source": "./validator/val.cpp",
+    "testsFilePath": "./validator/validator_tests.json"
+  },
+  "testsets": [
+    {
+      "name": "tests",
+      "generatorScript": {
+        "commands": [
+          {
+            "useInStatements": true,
+            "type": "manual",
+            "manualFile": "./manual/tests/sample1.txt"
+          },
+          {
+            "type": "generator",
+            "generator": "gen",
+            "range": [
+              50,
+              60
+            ]
+          },
+          {
+            "type": "generator",
+            "generator": "gen",
+            "range": [
+              500,
+              505
+            ]
+          },
+          {
+            "type": "generator",
+            "generator": "gen",
+            "range": [
+              99990,
+              100000
+            ]
+          },
+          {
+            "type": "generator",
+            "generator": "gen_max",
+            "range": [
+              99990,
+              100000
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "problemId": 509458
+}
