@@ -1,12 +1,6 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-#ifdef ONLINE_JUDGE
-#define DBG(X)
-#else
-#define DBG(X) println(#X": {}", X)
-#endif
-
 #define int int64_t
 
 const int inf = 1e15;
@@ -21,9 +15,6 @@ void smax(int &a, const int b) { a = max(a, b); }
 
 vector<array<int, 2>> vals;
 dp combine(dp a, dp b, int m, int D) { // D = maximum allowed gap
-    DBG(a);
-    DBG(b);
-    DBG(D);
     dp res = id;
     for (auto &w : {0, 1, 2}) for (auto &z : {0, 1, 2}) {
         smax(res[w][z], a[w][0] + b[0][z]);
@@ -34,7 +25,6 @@ dp combine(dp a, dp b, int m, int D) { // D = maximum allowed gap
             }
         }
     }
-    DBG(res);
     return res;
 }
 
@@ -49,31 +39,6 @@ void upd(int i, int D, dp val, int p = 1, int l = 0, int r = n / 2) {
         sgt[p] = combine(sgt[p << 1], sgt[p << 1 | 1], m << 1, D);
     }
 }
-// void upd(int i, int D, dp val) {
-//     int l = i << 1, r = (i << 1) + 2;
-//     for (sgt[i += n] = val; i > 1; r += r - l, i >>= 1) {
-//         if (i & 1) tie(l, r) = make_pair(l - (r - l), l), i ^= 1;
-//         if (l < 0 || r >= n) break;
-//         DBG(l);
-//         DBG(r);
-//         sgt[i >> 1] = combine(sgt[i], sgt[i ^ 1], r, D);
-//     }
-//     cout << "done" << endl;
-// }
-
-// int query(int l, int r, int D) {
-//     dp lv = id, rv = id;
-//     int sz = 1;
-//     for (l += n, r += n; l < r; l >>= 1, r >>= 1, sz <<= 1) {
-//         if (l & 1) {
-//             lv = combine(lv, sgt[l], l, D);
-//             l++;
-//         }
-//         if (r & 1) {
-
-//         }
-//     }
-// }
 
 vector<int> calculate_costs(
     vector<int32_t> W, vector<int32_t> A,
@@ -90,7 +55,6 @@ vector<int> calculate_costs(
         vals.push_back({inf, 0});
     }
     ranges::sort(vals);
-    DBG(vals);
     // so we can pair W that is <= E[j] apart, want to maximize sum taken
     vector<array<int, 2>> evts;
     for (int i = 1; i < n; i++) {
@@ -125,16 +89,3 @@ vector<int> calculate_costs(
     }
     return qs;
 }
-
-#ifndef ONLINE_JUDGE
-int32_t main() {
-    cin.tie(0)->sync_with_stdio(0);
-    auto res = calculate_costs(
-        {15, 12, 2, 10, 21},
-        {5, 4, 5, 6, 3},
-        {1, 2, 2, 3, 2},
-        {5, 9, 1}
-    );
-    DBG(res);
-}
-#endif
