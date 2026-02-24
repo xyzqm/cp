@@ -1,9 +1,10 @@
 import random
 
-print(1)
-n = 100000
-k = random.randint(1, n - 1)
-print(n, k)
-for i in range(1, n):
+print(1, 0)
+n = 5
+print(n)
+for i in range(n):
+    print(random.randint(1, n), end=' ')
     # print(i)
-    print(random.randint(1, i))
+
+print()
