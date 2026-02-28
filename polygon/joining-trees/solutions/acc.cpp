@@ -38,10 +38,11 @@ void ac() {
     DBG(ds);
     int mx = ranges::fold_left(ds, 0LL, std::plus<>()) + rts.size() - 1;
     cout << mx << " ";
-    for (int &d : ds) d = (d + 1) / 2;
     ranges::sort(ds, greater());
-    if (ds.size() == 1) cout << ds[0] << "\n";
-    else cout << ds[0] + ds[1] + 1 + (ds.size() > 2 && ds[0] == ds[1] == ds[2]) << "\n";
+    int mn = ds[0];
+    for (int &d : ds) d = (d + 1) / 2;
+    if (ds.size() == 1) cout << max(mn, ds[0]) << "\n";
+    else cout << max(mn, ds[0] + ds[1] + 1 + (ds.size() > 2 && ds[0] == ds[1] && ds[0] == ds[2])) << "\n";
 }
 
 int32_t main() {
