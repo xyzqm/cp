@@ -1,0 +1,122 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+//#define ONLINE_JUDGE
+#ifdef ONLINE_JUDGE
+#define DBG(X)
+#else
+#define DBG(X) println(#X": {}", X)
+#endif
+
+#define int int64_t
+
+void chmax(int& x, int y) {
+    x=max(x,y);
+}
+#define N 505
+
+int dp[N][N][N][2];
+int dp2[N+5];
+int ndp2[N+5];
+void ac() {
+    int n,k,e,m;
+    cin >> n >> k >> e >> m;
+
+    vector<bool> s(n);
+    string ss;
+    cin >> ss;
+    for (int i=0;i<n;i++){
+        s[i]=(ss[i]=='1');
+    }
+
+    //for each group, for each prefix we can operate on,
+    // for each # of ops (<= prefix size), 0/1 if we opreate or not, what is max # of 1s in the end
+
+    //vector<vector<vector<array<int,2>>>> dp(k);
+    for (int a =0;a<=n+5;a++){
+        for (int b =0;b<=n+5;b++){
+            for (int c =0;c<n+5;c++){
+                dp[a][b][c][0]=INT_MIN;
+                dp[a][b][c][1]=INT_MIN;
+            }
+        }
+    }
+    for (int i =0;i<k;i++){
+        vector<bool> cur;
+        int curs = 0;
+        for (int j = i;j<n;j+=k){
+            cur.push_back(s[j]);
+            curs += s[j];
+        }
+        int sz = cur.size();
+        //dp[i] = vector<vector<array<int,2>>>(sz,vector<array<int,2>>(sz,{INT_MIN,INT_MIN}));
+        dp[i][0][0][0]=curs;
+        dp[i][0][0][1] = INT_MIN;
+        for (int j =1 ;j<sz;j++){
+            for (int l = 0;l<=j;l++) {
+                //don't toggle
+                chmax(dp[i][j][l][0],dp[i][j-1][l][0]);
+                chmax(dp[i][j][l][0],dp[i][j-1][l][1]);
+
+                //do toggle
+                if (l>=1){
+                    //no toggle before
+                    int prev = cur[j-1]+cur[j];
+                    chmax(dp[i][j][l][1],dp[i][j-1][l-1][0]+(2-prev-prev));
+
+                    //toggled before
+                    prev = 1-cur[j-1]+cur[j];
+                    chmax(dp[i][j][l][1],dp[i][j-1][l-1][1]+(2-prev-prev));
+                }
+            }
+        }
+    }
+
+    int ans=0;
+    for (int i = 0;i<n &&i<=e;i++) {
+        vector<int> maxpref(k,0);
+        for (int j = 0;j<=min(i,n-k-1);j++) {
+            maxpref[j%k] = j/k+1;
+        }
+        int maxtog;
+        if (m==0){
+            maxtog = n+5;
+        }else{
+            maxtog=min((e-i)/m,n+5);
+        }
+
+        //for first i groups, after doing j toggles, max # of 1s in first i groups so far
+        for (int j=0;j<=maxtog;j++){
+            dp2[j]=0;
+        }
+        for (int j = 0;j<k;j++){
+            for (int w = 0;w<=maxtog;w++){
+                ndp2[w]=0;
+            }
+
+            for (int w = 0;w<=maxtog;w++){
+                //cout << ss << endl;
+                //cout << j << " " << dp[j].size() << " " << maxpref[j] << endl;
+                for (int l = 0;l<=maxpref[j];l++){
+                    if (w-l>=0){
+                        int* curdp = dp[j][maxpref[j]][l];
+                        chmax(ndp2[w],dp2[w-l]+max(curdp[0],curdp[1]));
+                    }
+                    if (w>=1){
+                        chmax(ndp2[w],ndp2[w-1]);
+                    }
+                }
+            }
+            swap(dp2,ndp2);
+        }
+        //cout << dp2.size() << " " << maxtog << endl;
+        chmax(ans,dp2[maxtog]);
+    }
+    cout << ans << '\n';
+}
+
+int32_t main() {
+    cin.tie(0)->sync_with_stdio(0);
+    int t; cin >> t;
+    while (t--) ac();
+}
