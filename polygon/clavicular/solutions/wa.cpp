@@ -27,6 +27,7 @@ vector<int> ac() {
         if (vals[i] == k) ++ks;
         else ++non_ks;
     }
+    return {0};
     ranges::sort(vals);
     vector<int> rt(n + 1);
     int fst = rt[0] = k; // first ending index

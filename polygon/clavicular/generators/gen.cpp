@@ -13,7 +13,8 @@ int main(int argc, char* argv[]) {
     cout << t << "\n";
 
     while (t--) {
-        int k = rnd.next(1, N), x = rnd.next(1, N);
+        int k = rnd.next(1, N);
+        int x = rnd.next(1, N / k);
         cout << N << " " << k << " " << x << endl;
         for (int i = 1; i <= N; i++) {
             cout << rnd.next(1, k) << " \n"[i == N];

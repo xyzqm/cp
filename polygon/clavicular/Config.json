@@ -26,6 +26,12 @@
       "source": "./solutions/acc.cpp",
       "tag": "MA",
       "sourceType": "cpp.gcc14-64-msys2-g++23"
+    },
+    {
+      "name": "wa",
+      "source": "./solutions/wa.cpp",
+      "tag": "WA",
+      "sourceType": "cpp.gcc14-64-msys2-g++23"
     }
   ],
   "generators": [
@@ -102,5 +108,6 @@
         }
       ]
     }
-  ]
+  ],
+  "problemId": 515582
 }
