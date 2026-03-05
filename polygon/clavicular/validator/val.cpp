@@ -20,7 +20,7 @@ int main(int argc, char *argv[]) {
         total_n += n;
 
         for (int i = 0; i < n; ++i) {
-            inf.readInt(1, k); // You can add range checks here if needed
+            inf.readInt(1, k, "a[i]");
             if (i + 1 < n) inf.readSpace();
         }
         inf.readEoln();

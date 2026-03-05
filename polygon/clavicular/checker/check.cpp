@@ -19,6 +19,7 @@ int main(int argc, char* argv[]) {
     int t = inf.readInt();
 
     for (int test = 0; test < t; ++test) {
+        setTestCase(test + 1);
         int n = inf.readInt();
         int k = inf.readInt();
         int x = inf.readInt();
@@ -30,7 +31,7 @@ int main(int argc, char* argv[]) {
         // Read output
         std::vector<int> perm(n, 1);
         for (int i = 0; i < n; i++) if (perm[0]) {
-            perm[i] = ouf.readInt();
+            perm[i] = ouf.readInt(0, k);
         }
 
         // Check permutation validity
