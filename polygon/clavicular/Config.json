@@ -35,9 +35,8 @@
     }
   ],
   "checker": {
-    "name": "wcmp",
-    "source": "wcmp.cpp",
-    "isStandard": true
+    "name": "check",
+    "source": "checker/check.cpp"
   },
   "validator": {
     "name": "validator",

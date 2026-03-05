@@ -1,0 +1,57 @@
+#include "testlib.h"
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+// Checks if a subarray of length k is k-good
+int cnt_k_good(const std::vector<int>& a, int k) {
+    int rt = k - 1, tot = 0; // rightmost possible point
+    for (int i = 0; i < a.size(); i++) {
+        if (a[i] == k) tot += rt <= i;
+        else rt = max(rt, i + k - a[i]);
+    }
+    return tot;
+}
+
+int main(int argc, char* argv[]) {
+    registerTestlibCmd(argc, argv);
+
+    int t = inf.readInt();
+
+    for (int test = 0; test < t; ++test) {
+        int n = inf.readInt();
+        std::vector<int> a(n);
+        for (int i = 0; i < n; ++i) {
+            a[i] = inf.readInt();
+        }
+
+        int x = inf.readInt();
+        int k = inf.readInt();
+
+        // Read output
+        std::vector<int> perm(n, 1);
+        for (int i = 0; i < n; i++) if (perm[0]) {
+            perm[i] = inf.readInt();
+        }
+
+        // Check permutation validity
+        auto sorted_a = a;
+        int mx = cnt_k_good(sorted_a, k);
+        int mn = ranges::count(a, k) - k - 1;
+        for (int v : a) if (v != k) mn -= k - v + 1;
+        if (!perm[0]) {
+            if (x < mn || x > mx) continue;
+            quitf(_wa, "Reported impossible, but jury found a construction.");
+        }
+        auto sorted_perm = perm;
+        sort(sorted_a.begin(), sorted_a.end());
+        sort(sorted_perm.begin(), sorted_perm.end());
+        if (sorted_a != sorted_perm)
+            quitf(_wa, "Output is not a valid permutation of input array.");
+
+        // Count k-good subarrays
+        if (int cnt = cnt_k_good(perm, k); cnt != x)
+            quitf(_wa, "Permutation contains %d k-good subarrays, expected %d.", cnt, x);
+    }
+    quitf(_ok, "All test cases passed.");
+}
