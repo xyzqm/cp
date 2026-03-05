@@ -41,17 +41,17 @@ int main(int argc, char* argv[]) {
         for (int v : a) if (v != k) mn -= k - (v + 1);
         if (!perm[0]) {
             if (x < mn || x > mx) continue;
-            quitf(_wa, "Test %d: Reported impossible, but jury found a construction.", test);
+            quitf(_wa, "Reported impossible, but jury found a construction.");
         }
         auto sorted_perm = perm;
         sort(sorted_a.begin(), sorted_a.end());
         sort(sorted_perm.begin(), sorted_perm.end());
         if (sorted_a != sorted_perm)
-            quitf(_wa, "Test %d: Output is not a valid permutation of input array.", test);
+            quitf(_wa, "Output is not a valid permutation of input array.");
 
         // Count k-good subarrays
         if (int cnt = cnt_k_good(perm, k); cnt != x)
-            quitf(_wa, "Test %d: Permutation contains %d k-good subarrays, expected %d.", test, cnt, x);
+            quitf(_wa, "Permutation contains %d k-good subarrays, expected %d.", cnt, x);
     }
     quitf(_ok, "All test cases passed.");
 }
