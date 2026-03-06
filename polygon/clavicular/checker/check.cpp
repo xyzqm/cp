@@ -36,6 +36,7 @@ int main(int argc, char* argv[]) {
 
         // Check permutation validity
         auto sorted_a = a;
+        sort(sorted_a.begin(), sorted_a.end());
         int mx = cnt_k_good(sorted_a, k);
         int mn = count(a.begin(), a.end(), k) - (k - 1);
         for (int v : a) if (v != k) mn -= k - (v + 1);
@@ -44,7 +45,6 @@ int main(int argc, char* argv[]) {
             quitf(_wa, "Reported impossible, but jury found a construction.");
         }
         auto sorted_perm = perm;
-        sort(sorted_a.begin(), sorted_a.end());
         sort(sorted_perm.begin(), sorted_perm.end());
         if (sorted_a != sorted_perm)
             quitf(_wa, "Output is not a valid permutation of input array.");

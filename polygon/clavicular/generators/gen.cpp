@@ -13,7 +13,9 @@ int main(int argc, char* argv[]) {
     cout << t << "\n";
 
     while (t--) {
-        int k = rnd.next(1, N);
+        int ub = 1000;
+        if (rnd.next(0, 1)) ub = 10;
+        int k = rnd.next(1, min(N, ub));
         int x = rnd.next(1, N / k);
         cout << N << " " << k << " " << x << endl;
         for (int i = 1; i <= N; i++) {
