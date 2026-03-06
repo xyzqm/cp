@@ -14,8 +14,10 @@ int main(int argc, char* argv[]) {
 
     while (t--) {
         int ub = 1000;
-        if (rnd.next(0, 1)) ub = 10;
+        int t = rnd.next(0, 2);
+        if (t == 1) ub = 10;
         int k = rnd.next(1, min(N, ub));
+        if (t == 2) k = 2;
         int x = rnd.next(1, N / k);
         cout << N << " " << k << " " << x << endl;
         for (int i = 1; i <= N; i++) {

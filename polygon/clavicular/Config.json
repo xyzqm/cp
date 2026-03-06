@@ -28,6 +28,12 @@
       "sourceType": "cpp.gcc14-64-msys2-g++23"
     },
     {
+      "name": "ac2",
+      "source": "./solutions/ac2.cpp",
+      "tag": "AC",
+      "sourceType": "cpp.gcc14-64-msys2-g++23"
+    },
+    {
       "name": "wa",
       "source": "./solutions/wa.cpp",
       "tag": "WA",
