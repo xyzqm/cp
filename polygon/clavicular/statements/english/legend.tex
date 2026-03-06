@@ -1,6 +1,21 @@
-A $k$-good array is an array $a$ of length $k$ such that $a_i \geq i$
-for all $1 \leq i \leq k$.
+There are $n$ fraternity houses at ASU, and the $i$-th frat house has an
+average frame value of $a_i$.
+Clavicular has decided to stream $n - k + 1$ times, with the $i$th
+stream starting from frat house $i$ and ending at frat house $i + k - 1$.
+Clavicular starts every stream with a frame value of $0$, but
+each time he visits a new frat house, his frame value will increase by $1$.
+Now, If Clavicular visits frat house
+$i$ while he has a frame value of $f$, he will get frame-mogged if $a_i \geq f$.
+Furthermore, if he gets frame-mogged at all $k$ houses in a given stream,
+he gets stream-mogged.
 
-You are given an array $a$ of $n$ integers, as well as parameters $x, k \leq n$.
-Permute $a$ such that it has exactly $x$ $k$-good subarrays,
-or report that this task is impossible.
+Formally, stream $i$ stream-mogs Clavicular if $a_{i + j - 1} \geq j$ for all $1 \leq j \leq k$.
+
+As Clavicular's PR specialist, you do not want him to get stream-mogged too many
+times. However, you also don't want him to not get stream-mogged at all, as
+that would be a little too uninteresting. Hence, you've decided that he
+should be stream-mogged exactly $x$ times.
+
+To achieve this goal, you can rearrange the frat houses however you want.
+Your job is to either output a suitable permutation of $a$
+or report that the task is impossible.

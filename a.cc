@@ -1,38 +1,167 @@
+
 #include <bits/stdc++.h>
 using namespace std;
 
-#define ONLINE_JUDGE
-#ifdef ONLINE_JUDGE
-#define DBG(X)
-#else
-#define DBG(X) println(#X": {}", X)
-#endif
-
-#define int int64_t
-
-int m;
-
-void ac(){
-   int n; cin >> n;
-   vector<int> a(n + 1);
-   for(int i = 1; i <= n; i++) cin >> a[i];
-   int ans = 0;
-   for(int i = 2; i <= n; i++){
-      int mn = min(a[i], a[i - 1]);
-      a[i - 1] -= mn;
-      a[i] -= mn;
-      if(i + 1 <= n) a[i + 1] = max(0ll, a[i + 1] - mn);
-      ans += mn;
-   }
-   for(int i = 1; i <= n; i++) ans += a[i];
-   cout << ans << endl;
+int cnt_k_good(const std::vector<int>& a, int k) {
+    int rt = k - 1, tot = 0; // rightmost possible point
+    for (int i = 0; i < (int)a.size(); i++) {
+        if (a[i] == k) tot += rt <= i;
+        else rt = max(rt, i + k - a[i]);
+    }
+    return tot;
 }
 
-int32_t main() {
-    cin.tie(0)->sync_with_stdio(0);
-    int t; cin >> t >> m;
-    // if (m > 1) {
-    //     cout << "10\n1\n1 10\n12\n3\n2 1\n3 6\n1 5\n";
-    // }
-    while (t--) ac();
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int T;
+    cin >> T;
+    while (T--) {
+        int n, k;
+        long long x;
+        cin >> n >> k >> x;
+        vector<int> a(n);
+        for (int i = 0; i < n; i++) cin >> a[i];
+
+        long long maxWin = n - k + 1;
+        if (x > maxWin) {
+            cout << 0 << "\n";
+            continue;
+        }
+
+        vector<long long> cnt(k + 1, 0);
+        for (int v : a) cnt[v]++;
+
+        // k = 1
+        if (k == 1) {
+            if (x != n) {
+                cout << 0 << "\n";
+            } else {
+                for (int i = 0; i < n; i++) cout << a[i] << (i + 1 == n ? '\n' : ' ');
+            }
+            continue;
+        }
+
+        // k = 2
+        if (k == 2) {
+            long long c2 = cnt[2], c1 = cnt[1];
+            vector<int> ans;
+            ans.reserve(n);
+
+            if (c2 == x) {
+                // all 2s must be in positions 2..n, so position 1 must be 1
+                if (c1 == 0) { cout << 0 << "\n"; continue; }
+                ans.push_back(1);
+                cnt[1]--;
+                ans.insert(ans.end(), (int)cnt[2], 2);
+                ans.insert(ans.end(), (int)cnt[1], 1);
+            } else if (c2 == x + 1) {
+                // hide one 2 at position 1
+                if (c2 == 0) { cout << 0 << "\n"; continue; }
+                ans.push_back(2);
+                cnt[2]--;
+                ans.insert(ans.end(), (int)cnt[2], 2);
+                ans.insert(ans.end(), (int)cnt[1], 1);
+            } else {
+                cout << 0 << "\n";
+                continue;
+            }
+
+            if ((int)ans.size() != n) { cout << 0 << "\n"; continue; }
+            for (int i = 0; i < n; i++) cout << ans[i] << (i + 1 == n ? '\n' : ' ');
+            continue;
+        }
+
+        // k >= 3
+        vector<int> ans;
+        ans.reserve(n);
+
+        auto fail = [&]() {
+            sort(a.begin(), a.end());
+            int mx = cnt_k_good(a, k);
+            int mn = count(a.begin(), a.end(), k) - (k - 1);
+            for (int v : a) if (v != k) mn -= k - (v + 1);
+            assert(x < mn || x > mx);
+            cout << 0 << "\n";
+        };
+
+        // Build prefix:
+        if (x > 0) {
+            if (cnt[k] < x) { fail(); continue; }
+            cnt[k] -= x; // reserve x copies of k for the "good" ends
+
+            // Build ramp r[1..k-1] with r[i] >= i, using largest available values to preserve small breakers.
+            int cur = k;
+            vector<int> ramp(k, 0); // 1..k-1 used
+            for (int i = k - 1; i >= 1; i--) {
+                while (cur > 0 && cnt[cur] == 0) cur--;
+                if (cur < i) { fail(); goto next_case; }
+                ramp[i] = cur;
+                cnt[cur]--;
+            }
+
+            for (int i = 1; i <= k - 1; i++) ans.push_back(ramp[i]);
+            for (long long i = 0; i < x; i++) ans.push_back(k);
+        } else {
+            // x == 0: just put a safe prefix of length k-1 using largest values (stashes many k's early)
+            int cur = k;
+            for (int i = 0; i < k - 1; i++) {
+                while (cur > 0 && cnt[cur] == 0) cur--;
+                if (cur == 0) { fail(); goto next_case; }
+                ans.push_back(cur);
+                cnt[cur]--;
+            }
+        }
+
+        // Now neutralize remaining k's using breaker blocks.
+        {
+            long long remK = cnt[k];
+
+            long long capSum = 0;
+            for (int v = 1; v <= k - 2; v++) {
+                capSum += cnt[v] * (long long)(k - v - 1);
+            }
+            if (remK > capSum) { fail(); goto next_case; }
+
+            vector<pair<int,int>> blocks;
+            blocks.reserve((int)min<long long>(remK, n));
+
+            for (int v = 1; v <= k - 2 && remK > 0; v++) {
+                int cap = k - v - 1;
+                while (cnt[v] > 0 && remK > 0) {
+                    int take = (int)min<long long>(remK, cap);
+                    blocks.push_back({v, take});
+                    cnt[v]--;      // consume this breaker
+                    remK -= take;  // consume that many k's
+                }
+            }
+            if (remK != 0) { fail(); goto next_case; }
+
+            cnt[k] = 0; // all remaining k's will be output inside blocks
+
+            // Output all leftover non-k values first (any order is fine)
+            for (int v = 1; v <= k - 1; v++) {
+                while (cnt[v] > 0) {
+                    ans.push_back(v);
+                    cnt[v]--;
+                }
+            }
+
+            // Then output breaker blocks: v followed by 'take' k's (adjacent!)
+            for (auto [v, take] : blocks) {
+                ans.push_back(v);
+                for (int i = 0; i < take; i++) ans.push_back(k);
+            }
+        }
+
+        if ((int)ans.size() != n) { fail(); goto next_case; }
+        assert(cnt_k_good(ans, k) == x);
+        for (int i = 0; i < n; i++) cout << ans[i] << (i + 1 == n ? '\n' : ' ');
+
+    next_case:
+        continue;
+    }
+
+    return 0;
 }
