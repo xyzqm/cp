@@ -27,6 +27,12 @@
       "source": "./solutions/tle.cpp",
       "tag": "TL",
       "sourceType": "cpp.gcc14-64-msys2-g++23"
+    },
+    {
+      "name": "tle2",
+      "source": "./solutions/tle2.cpp",
+      "tag": "TL",
+      "sourceType": "cpp.gcc14-64-msys2-g++23"
     }
   ],
   "generators": [
@@ -63,14 +69,6 @@
             "type": "generator",
             "generator": "gen",
             "range": [
-              50,
-              60
-            ]
-          },
-          {
-            "type": "generator",
-            "generator": "gen",
-            "range": [
               500,
               505
             ]
@@ -79,16 +77,16 @@
             "type": "generator",
             "generator": "gen",
             "range": [
-              99990,
-              100000
+              199990,
+              200000
             ]
           },
           {
             "type": "generator",
             "generator": "gen_max",
             "range": [
-              99990,
-              100000
+              199990,
+              200000
             ]
           }
         ]

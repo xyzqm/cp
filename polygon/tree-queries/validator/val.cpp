@@ -50,14 +50,14 @@ int main(int argc, char *argv[])
         setTestCase(tc + 1);
 
         // Read n and q for this test case
-        int n = inf.readInt(1, 100000, "n");
+        int n = inf.readInt(1, 200000, "n");
         inf.readSpace();
         int q = inf.readInt(1, 300000, "q");
         inf.readEoln();
 
         total_n += n;
         total_q += q;
-        ensure(total_n <= 100000);
+        ensure(total_n <= 200000);
         ensure(total_q <= 300000);
 
         // Read tree edges: n-1 lines of u v
