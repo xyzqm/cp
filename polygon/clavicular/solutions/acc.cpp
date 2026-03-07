@@ -21,11 +21,9 @@ int cnt_k_good(const std::vector<int>& a, int k) {
 
 vector<int> ac() {
     int n, k, x; cin >> n >> k >> x;
-    int ks = 0, non_ks = 0; vector<int> vals(n + 1);
+    vector<int> vals(n + 1);
     for (int i = 1; i <= n; i++) {
         cin >> vals[i];
-        if (vals[i] == k) ++ks;
-        else ++non_ks;
     }
     ranges::sort(vals);
     vector<int> rt(n + 1);
@@ -34,12 +32,8 @@ vector<int> ac() {
         if (vals[i] < k) fst = max(fst, i + k - vals[i]);
         rt[i] = fst;
     }
-    non_ks = fst - 1;
-    ks = n - non_ks;
-    DBG(ks);
-    if (ks < x) return {0};
+    int non_ks = min(fst - 1, n);
     DBG(vals);
-    // DBG(ks);
     DBG(rt);
     for (int i = non_ks, lst = vals.size(); i > 0 && lst - rt[i] > x; i--) { // lst = one idx after position of last undeleted k
         if (vals[i] == k) continue;
@@ -47,7 +41,6 @@ vector<int> ac() {
         if (lst - del - 1 - rt[i - 1] >= x) {
             swap(vals[i], vals[lst - 1 - del]);
             lst -= del + 1;
-            ks = lst - rt[i - 1];
         }
         else {
             int j = i;
@@ -57,7 +50,6 @@ vector<int> ac() {
                 rt[i] = max(rt[i], j + k - vals[i]);
             }
             assert(lst - rt[i] == x);
-            ks = x;
             swap(vals[i], vals[j]);
             break;
         }
@@ -65,9 +57,8 @@ vector<int> ac() {
     DBG(vals);
     DBG(ks);
     vals.erase(vals.begin());
-    if (ks > x) return {0};
-    assert(cnt_k_good(vals, k) == x);
-    return vals;
+    if (cnt_k_good(vals, k) != x) return {0};
+    else return vals;
 }
 
 int32_t main() {

@@ -19,9 +19,10 @@ int main(int argc, char* argv[]) {
         int k = rnd.next(1, min(N, ub));
         if (t == 2) k = 2;
         int x = rnd.next(1, N / k);
+        if (rnd.next(0, 1)) x = min(x, rnd.next(0, 10));
         cout << N << " " << k << " " << x << endl;
         for (int i = 1; i <= N; i++) {
-            cout << rnd.next(1, k) << " \n"[i == N];
+            cout << (rnd.next(0, 2) == 2 ? rnd.next(1, k) : k) << " \n"[i == N];
         }
     }
     return 0;
