@@ -1,13 +1,6 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-#define ONLINE_JUDGE
-#ifdef ONLINE_JUDGE
-#define DBG(X)
-#else
-#define DBG(X) println(#X": {}", X)
-#endif
-
 #define int int64_t
 
 struct bit : vector<int> {
@@ -23,7 +16,6 @@ struct bit : vector<int> {
 };
 
 int ac() {
-    // int n; cin >> n;
     string s; cin >> s;
     vector<int> frq(26);
     for (char c : s) ++frq[c - 'a'];
@@ -42,7 +34,6 @@ int ac() {
         else mp[i] = fst++;
         pos[s[i] - 'a'].push(mp[i]);
     }
-    DBG(mp);
     bit fen(s.size());
     int inv = 0;
     for (int x : mp) {
@@ -53,7 +44,6 @@ int ac() {
 }
 
 int32_t main() {
-    // cin.tie(0)->sync_with_stdio(0);
     int t; cin >> t;
     while (t--) cout << ac() << "\n";
 }
