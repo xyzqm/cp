@@ -1,10 +1,8 @@
 import random
 
-print(1)
-n, k = 20, 4
-print(n, k, random.randint(1, n // k))
+print(1, 1)
+n, m = 5, random.randint(5, 20)
+print(n, m)
 for i in range(n):
-    print(random.randint(1, k), end=' ')
+    print(random.randint(-10, 10), random.randint(-10, 10))
     # print(i)
-
-print()
