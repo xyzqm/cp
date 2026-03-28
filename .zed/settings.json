@@ -1,6 +1,4 @@
 {
   "format_on_save": "off",
-  "copilot": {
-    "disabled_globs": ["**/*"]
-  }
+  "disable_ai": true
 }

@@ -1,4 +1,3 @@
-#!/bin/bash
 g++ -std=c++23 -DONLINE_JUDGE $1 -o a
 g++ -std=c++23 -DONLINE_JUDGE $2 -o b
 for ((i = 1; ; i++)); do

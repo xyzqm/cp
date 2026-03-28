@@ -1,66 +1,172 @@
 #include <bits/stdc++.h>
 using namespace std;
+#define int long long
+#define INF (int)1e18
 
-#ifdef ONLINE_JUDGE
-#define DBG(X)
-#else
-#define DBG(X) println(#X": {}", X)
-#endif
+mt19937_64 RNG(chrono::steady_clock::now().time_since_epoch().count());
 
-#define int int64_t
+void Solve()
+{
+    int n, m, l, q; cin >> n >> m >> l >> q;
+    swap(n, m);
 
-int cnt = 0;
-int ac() {
-    int n, m; cin >> n >> m;
-    vector<array<int, 2>> vs(n);
-    int ans = 0;
-    multiset<array<int, 2>, greater<>> slopes; // {slope, len}
-    // vector<int> tgt;
-    for (auto &[b, a] : vs) {
-        cin >> a >> b;
-        // tgt.push_back(a + b);
-        // ans += max(a + b, 0LL);
-        slopes.insert({2 * (a + b), 1});
+    vector <int> a(n + 1);
+    for (int i = 1; i <= n; i++){
+        cin >> a[i];
     }
-    // sort(tgt.begin(), tgt.end(), greater<>());
-    // if (tgt.size() > 1) ans = max(ans, tgt[0] + tgt[1]);
-    // else if (m == 1) ans = max(ans, tgt[0]);
-    // if (++cnt == 7) {
-    //     cout << n << " " << m << "\n";
-    //     for (auto &[b, a] : vs) cout << a << " " << b << "\n";
-    // }
-    // if (!m) return 0;
-    // else if (m == 1) return mx_a;
-    // DBG(vs);
-    sort(vs.begin(), vs.end(), [&](array<int, 2> a, array<int, 2> b) {
-       return array{a[0], a[1]} < array{b[0], b[1]};
-    });
-    DBG(vs);
-    auto upd_mx = [&](int cnt, int need) {
-        int cur = 0;
-        for (auto &[s, len] : slopes)
-        if (cnt - len >= 0)
-        if (len == 1 || (cnt >= len + need && s > 0)) {
-            cur += s * len / 2, cnt -= len;
-            DBG(cur);
-            need -= (len == 1);
-            if (need <= 0) ans = max(ans, cur);
+
+    // lines : {a[i], -i}
+    // a[i] - i * slope
+
+    vector <int> ans(q), got(q, INF);
+    vector <array<int, 4>> qq;
+    vector <int> a1(q), a2(q), a3(q);
+
+    for (int i = 0; i < q; i++){
+        int slope, x; cin >> slope >> x;
+
+        int L, R;
+
+        {
+            int lo = 1, hi = n + 1;
+            while (lo != hi){
+                int mid = (lo + hi) / 2;
+                if (a[mid] + l > x){
+                    hi = mid;
+                } else {
+                    lo = mid + 1;
+                }
+            }
+
+            L = lo;
         }
-    };
-    upd_mx(m, 2 - (m == 1));
-    for (auto &[b, a]: vs) {
-        slopes.erase(slopes.find({2 * (a + b), 1}));
-        slopes.insert({a, 2});
-        DBG(slopes);
-        upd_mx(m - 1, 2);
-        // DBG(ans);
+
+        {
+            int lo = L - 1, hi = n;
+            while (lo < hi){
+                int mid = (lo + hi + 1) / 2;
+                if (a[mid] <= x){
+                    lo = mid;
+                } else {
+                    hi = mid - 1;
+                }
+            }
+
+            R = lo;
+        }
+
+        if (L > n || L > R){
+            ans[i] = 0;
+            continue;
+        }
+
+        ans[i] = R - L + 1;
+        // ans = min(ans, (mn + l - x) / slope + R);
+        qq.push_back({slope, L, R, i});
+        a1[i] = l - x;
+        a2[i] = slope;
+        a3[i] = R;
     }
-    upd_mx(m, 0);
-    return ans;
+
+    auto useless = [&](int i1, int i2, int i3){
+        assert(i1 < i2 && i2 < i3);
+        // at less slope, i1 is likely to become better
+        // at more slope, i3 is likely to be better
+        // a[i] - i * s = a[j] - j * s
+        // s (i - j) = a[i] - a[j]
+        // s = a[i] - a[j] / (i - j)
+
+        return (a[i2] - a[i1]) * (i3 - i2) >= (a[i3] - a[i2]) * (i2 - i1);
+    };
+
+    auto eval = [&](int i, int slope){
+        // a[i] - i * slope
+        return a[i] - i * slope;
+    };
+
+    auto dnc = [&](auto self, int l, int r, vector <array<int, 4>> qq) -> vector <int>{
+        vector <int> st;
+        vector <array<int, 4>> lq, rq, aq;
+        int mid = (l + r) / 2;
+
+        for (auto [slope, ql, qr, i] : qq){
+            if (ql <= l && r <= qr){
+                aq.push_back({slope, ql, qr, i});
+            } else {
+                if (ql <= mid){
+                    lq.push_back({slope, ql, qr, i});
+                }
+                if (qr > mid){
+                    rq.push_back({slope, ql, qr, i});
+                }
+            }
+        }
+
+        if (l == r){
+            st.push_back(l);
+        } else {
+            st = self(self, l, mid, lq);
+            auto rs = self(self, mid + 1, r, rq);
+
+            for (auto x : rs){
+                int sz = st.size();
+
+                while (sz >= 2 && useless(st[sz - 2], st[sz - 1], x)){
+                    st.pop_back();
+                    sz -= 1;
+                }
+
+                st.push_back(x);
+            }
+        }
+
+        int ptr = 0;
+        for (auto [slope, ql, qr, i] : aq){
+            while (ptr + 1 < st.size() && eval(st[ptr + 1], slope) <= eval(st[ptr], slope)){
+                ptr++;
+            }
+
+            got[i] = min(got[i], eval(st[ptr], slope));
+        }
+        return st;
+    };
+
+    sort(qq.begin(), qq.end());
+
+    dnc(dnc, 1, n, qq);
+
+    auto get = [&](int x, int y){
+        int z = x / y;
+        if (z * y > x) z--;
+        return z;
+    };
+
+    for (int i = 0; i < q; i++) if (ans[i] != 0){
+        ans[i] = min(ans[i], get((got[i] + a1[i]), a2[i]) + a3[i]);
+    }
+
+    for (auto x : ans){
+        cout << x << "\n";
+    }
 }
 
-int32_t main() {
-    cin.tie(0)->sync_with_stdio(0);
-    int s, t; cin >> s >> t;
-    while (t--) cout << ac() << "\n";
+int32_t main()
+{
+    auto begin = std::chrono::high_resolution_clock::now();
+    ios_base::sync_with_stdio(0);
+    cin.tie(0);
+    int t = 1;
+    // freopen("in",  "r", stdin);
+    // freopen("out", "w", stdout);
+
+  //  cin >> t;
+    for(int i = 1; i <= t; i++)
+    {
+        //cout << "Case #" << i << ": ";
+        Solve();
+    }
+    auto end = std::chrono::high_resolution_clock::now();
+    auto elapsed = std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin);
+    // cerr << "Time measured: " << elapsed.count() * 1e-9 << " seconds.\n";
+    return 0;
 }

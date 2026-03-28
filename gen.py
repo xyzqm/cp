@@ -1,6 +1,9 @@
 import random
 
-n = 1000
-print(n)
-for i in range(2, n + 1):
-    print(random.randint(1, i - 1), i)
+n, m, l, q = 1000000, 500, 100000, 100000
+print(n, m, l, q)
+vals = [random.randint(1, n) for _ in range(m)]
+vals.sort()
+print(*vals)
+for _ in range(q):
+    print(random.randint(1, n), random.randint(1, n))
