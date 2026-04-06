@@ -1,7 +1,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-// #define EVAL
+#define EVAL
 #ifdef EVAL
 #define DBG(X)
 #else
@@ -14,6 +14,7 @@ using namespace std;
 const int inf = 1e14;
 
 int32_t main() {
+    cin.tie(0)->sync_with_stdio(0);
     int n, m, L, q; cin >> n >> m >> L >> q;
     vector<int> t(m);
     for (int &x : t) {
