@@ -28,3 +28,4 @@ scratch.cc
 testlib.h
 **/testsets/tests
 **/solutions-outputs
+**/*.dSYM/
